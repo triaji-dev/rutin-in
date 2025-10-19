@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Habit Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Menggunakan font Inter dan tema gelap */
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #121212;
+        color: #e0e0e0;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        padding-top: 4rem;
+      }
+
+      /* Styling dasar untuk card dengan efek glassmorphism */
+      .task-card {
+        background-color: rgba(38, 38, 38, 0.7);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px); /* Safari support */
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      /* Menyembunyikan view yang tidak aktif */
+      .weekly-view.hidden,
+      .overview-view.hidden {
+        display: none;
+      }
+
+      /* Styling untuk lingkaran tanggal di weekly view */
+      .date-circle {
+        transition: all 0.2s ease;
+      }
+      .date-circle.completed {
+        background-color: #39d353;
+        border-color: #39d353;
+        color: #121212;
+      }
+
+      /* Styling untuk kotak di overview view, mirip GitHub */
+      .grid-square {
+        background-color: #2d2d2d;
+        transition: transform 0.2s ease;
+      }
+      .grid-square:hover {
+        transform: scale(1.1);
+      }
+      .grid-square.level-1 {
+        background-color: #0e4429;
+      }
+      .grid-square.level-2 {
+        background-color: #006d32;
+      }
+      .grid-square.level-3 {
+        background-color: #26a641;
+      }
+      .grid-square.level-4 {
+        background-color: #39d353;
+      }
+    </style>
+  </head>
+  <body class="bg-zinc-900">
+    <div id="card-container" class="w-full max-w-sm space-y-4 px-4">
+      <!-- Kartu habit akan digenerate oleh JavaScript di sini -->
+    </div>
+
+    <script type="module">
+      // --- 1. DATA STRUCTURE & STATE MANAGEMENT ---
+      const habits = [
+        {
+          id: 'habit-1',
+          name: 'Membaca Buku',
+          completedDates: new Set(['2025-10-20', '2025-10-18', '2025-10-17']),
+        },
+        {
+          id: 'habit-2',
+          name: 'Olahraga 30 Menit',
+          completedDates: new Set(['2025-10-19']),
+        },
+        {
+          id: 'habit-3',
+          name: 'Belajar Koding',
+          completedDates: new Set([
+            '2025-10-20',
+            '2025-10-19',
+            '2025-10-18',
+            '2025-10-16',
+          ]),
+        },
+      ];
+
+      // --- 2. UTILITY FUNCTIONS ---
+      // Fungsi untuk format tanggal ke YYYY-MM-DD
+      const formatDate = date => {
+        const d = new Date(date);
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        const year = d.getFullYear();
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+        return [year, month, day].join('-');
+      };
+
+      // Fungsi untuk mendapatkan 7 hari terakhir, berakhir hari ini
+      const getWeekDays = () => {
+        const today = new Date('2025-10-20T12:00:00'); // Tanggal statis untuk konsistensi demo
+        const days = [];
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+        for (let i = 6; i >= 0; i--) {
+          const day = new Date(today);
+          day.setDate(today.getDate() - i); // i=6 adalah 6 hari lalu, i=0 adalah hari ini
+          days.push({
+            date: day.getDate(),
+            fullDate: formatDate(day),
+            name: dayNames[day.getDay()],
+          });
+        }
+        return days;
+      };
+
+      // Fungsi untuk mendapatkan tanggal untuk grid overview
+      const getOverviewDays = (totalDays = 140) => {
+        const today = new Date('2025-10-20T12:00:00');
+        const days = [];
+        for (let i = 0; i < totalDays; i++) {
+          const day = new Date(today);
+          day.setDate(today.getDate() - i);
+          days.push(formatDate(day));
+        }
+        return days.reverse();
+      };
+
+      // --- 3. RENDERING LOGIC ---
+      const cardContainer = document.getElementById('card-container');
+
+      const renderHabits = () => {
+        cardContainer.innerHTML = ''; // Kosongkan container sebelum render ulang
+        const weekDays = getWeekDays();
+        const overviewDays = getOverviewDays();
+
+        habits.forEach(habit => {
+          const card = document.createElement('article');
+          card.className = 'task-card rounded-2xl p-4 shadow-lg';
+          card.dataset.habitId = habit.id;
+
+          // --- Card Header ---
+          const header = `
+                    <header class="card-header flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            <span class="font-semibold">${habit.name}</span>
+                        </div>
+                        <button class="options-btn p-1 rounded-full hover:bg-zinc-700">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                        </button>
+                    </header>
+                `;
+
+          // --- Card Body (Weekly + Overview) ---
+          const weeklyViewDays = weekDays
+            .map(
+              day => `
+                    <div class="text-center">
+                        <p class="text-xs text-gray-400 mb-1">${day.name}</p>
+                        <div class="date-circle w-8 h-8 rounded-full border-2 border-zinc-600 flex items-center justify-center cursor-pointer font-medium text-sm ${
+                          habit.completedDates.has(day.fullDate)
+                            ? 'completed'
+                            : ''
+                        }" data-date="${day.fullDate}">
+                            ${day.date}
+                        </div>
+                    </div>
+                `
+            )
+            .join('');
+
+          const overviewViewSquares = overviewDays
+            .map(date => {
+              const isCompleted = habit.completedDates.has(date);
+              // Untuk MVP, kita hanya gunakan satu level jika selesai
+              const levelClass = isCompleted ? 'level-4' : '';
+              return `<div class="grid-square w-3.5 h-3.5 rounded-sm cursor-pointer ${levelClass}" data-date="${date}"></div>`;
+            })
+            .join('');
+
+          const body = `
+                    <div class="card-body">
+                        <div class="weekly-view flex justify-between">
+                            ${weeklyViewDays}
+                        </div>
+                        <div class="overview-view hidden grid grid-cols-20 gap-1 place-content-center" style="grid-template-columns: repeat(20, minmax(0, 1fr));">
+                            ${overviewViewSquares}
+                        </div>
+                    </div>
+                `;
+
+          card.innerHTML = header + body;
+          cardContainer.appendChild(card);
+        });
+
+        // Re-attach event listeners setelah render
+        addEventListeners();
+      };
+
+      // --- 4. EVENT LISTENERS ---
+      const addEventListeners = () => {
+        document.querySelectorAll('.options-btn').forEach(btn => {
+          btn.addEventListener('click', e => {
+            const card = btn.closest('.task-card');
+            card.querySelector('.weekly-view').classList.toggle('hidden');
+            card.querySelector('.overview-view').classList.toggle('hidden');
+          });
+        });
+
+        document.querySelectorAll('.date-circle, .grid-square').forEach(el => {
+          el.addEventListener('click', e => {
+            const date = e.currentTarget.dataset.date;
+            const habitId =
+              e.currentTarget.closest('.task-card').dataset.habitId;
+            const habit = habits.find(h => h.id === habitId);
+
+            if (habit) {
+              if (habit.completedDates.has(date)) {
+                habit.completedDates.delete(date);
+              } else {
+                habit.completedDates.add(date);
+              }
+              // Render ulang semua untuk menyinkronkan kedua view
+              renderHabits();
+            }
+          });
+        });
+      };
+
+      // --- 5. INITIALIZATION ---
+      document.addEventListener('DOMContentLoaded', renderHabits);
+    </script>
+  </body>
+</html>
