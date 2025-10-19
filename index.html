@@ -32,17 +32,9 @@
       .date-circle {
         transition: all 0.2s ease;
       }
-      .date-circle.completed {
-        background-color: #39d353;
-        border-color: #39d353;
-        color: #121212;
-      }
-
       .grid-square {
         background-color: #2d2d2d;
-      }
-      .grid-square.level-4 {
-        background-color: #39d353;
+        transition: background-color 0.2s ease;
       }
 
       .dragging {
@@ -79,6 +71,9 @@
       }
       .context-menu .delete-option {
         color: #ef4444;
+      }
+      .habit-name {
+        transition: color 0.3s ease;
       }
     </style>
   </head>
@@ -127,8 +122,7 @@
       <div class="bg-zinc-800 rounded-lg p-6 w-full max-w-xs text-center mx-4">
         <h3 id="modal-title" class="font-bold text-lg mb-2">Are you sure?</h3>
         <p id="modal-text" class="text-zinc-400 mb-6 text-sm">
-          This will permanently delete all activities. This action cannot be
-          undone.
+          This action cannot be undone.
         </p>
         <div class="flex justify-center gap-4">
           <button
@@ -147,8 +141,27 @@
       </div>
     </div>
 
-    <div id="context-menu" class="context-menu w-32">
+    <div
+      id="color-modal"
+      class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center hidden z-50"
+    >
+      <div class="bg-zinc-800 rounded-lg p-6 w-full max-w-xs text-center mx-4">
+        <h3 class="font-bold text-lg mb-4">Choose a Color</h3>
+        <div id="color-swatches" class="flex justify-center gap-3 flex-wrap">
+          <!-- Color swatches are generated here by JS -->
+        </div>
+        <button
+          id="cancel-color-btn"
+          class="mt-6 bg-zinc-600 hover:bg-zinc-500 text-white font-bold py-2 px-6 rounded-lg w-full"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    <div id="context-menu" class="context-menu w-36">
       <button id="edit-btn">Edit</button>
+      <button id="change-color-btn">Change Color</button>
       <button id="delete-btn" class="delete-option">Delete</button>
     </div>
 
@@ -156,7 +169,21 @@
       let habits = [];
       let currentViewMode = 'weekly';
       let draggedItem = null;
-      let habitIdToDelete = null; // Untuk melacak habit yang akan dihapus
+      let habitIdToDelete = null;
+      let habitIdToColor = null;
+
+      const COLOR_SETS = {
+        green: { completed: '#39d353' },
+        blue: { completed: '#3b82f6' },
+        purple: { completed: '#8b5cf6' },
+        pink: { completed: '#ec4899' },
+        orange: { completed: '#f97316' },
+        yellow: { completed: '#f59e0b' },
+        teal: { completed: '#14b8a6' },
+        red: { completed: '#ef4444' },
+        indigo: { completed: '#6366f1' },
+        gray: { completed: '#a1a1aa' },
+      };
 
       const cardContainer = document.getElementById('card-container');
       const viewToggle = document.getElementById('view-toggle');
@@ -165,6 +192,7 @@
       const modal = document.getElementById('confirm-modal');
       const modalTitle = document.getElementById('modal-title');
       const modalText = document.getElementById('modal-text');
+      const colorModal = document.getElementById('color-modal');
       const contextMenu = document.getElementById('context-menu');
 
       const saveHabits = () =>
@@ -177,12 +205,14 @@
             }))
           )
         );
+
       const loadHabits = () => {
         const stored = localStorage.getItem('habits');
         if (stored) {
           habits = JSON.parse(stored).map(h => ({
             ...h,
             completedDates: new Set(h.completedDates),
+            color: h.color || 'green',
           }));
         } else {
           habits = [
@@ -190,6 +220,7 @@
               id: 'habit-1',
               name: 'Membaca Buku',
               completedDates: new Set(['2025-10-20', '2025-10-18']),
+              color: 'green',
             },
           ];
         }
@@ -218,47 +249,47 @@
           card.dataset.habitId = habit.id;
           card.draggable = true;
 
+          const theme = COLOR_SETS[habit.color] || COLOR_SETS.green;
           const isWeekly = currentViewMode === 'weekly';
           const dateInteractionClass = isWeekly
             ? 'cursor-pointer'
             : 'pointer-events-none';
 
-          const weekDays = getWeekDays();
-          const overviewDays = getOverviewDays();
-
-          const weeklyViewDays = weekDays
+          const weeklyViewDays = getWeekDays()
             .map(day => {
               const fullDate = formatDate(day);
               const isCompleted = habit.completedDates.has(fullDate);
+              const completedStyle = isCompleted
+                ? `style="background-color: ${theme.completed}; border-color: ${theme.completed}; color: #121212;"`
+                : '';
               return `
                         <div class="text-center">
                             <p class="text-xs text-zinc-400 mb-1">${day.toLocaleDateString(
                               'en-US',
                               { weekday: 'short' }
                             )}</p>
-                            <div class="date-circle w-8 h-8 rounded-full border-2 border-zinc-600 flex items-center justify-center font-medium text-sm ${
-                              isCompleted ? 'completed' : ''
-                            } ${dateInteractionClass}" data-date="${fullDate}">
+                            <div class="date-circle w-8 h-8 rounded-full border-2 border-zinc-600 flex items-center justify-center font-medium text-sm ${dateInteractionClass}" data-date="${fullDate}" ${completedStyle}>
                                 ${day.getDate()}
                             </div>
                         </div>`;
             })
             .join('');
 
-          const overviewViewSquares = overviewDays
+          const overviewViewSquares = getOverviewDays()
             .map(day => {
               const fullDate = formatDate(day);
               const isCompleted = habit.completedDates.has(fullDate);
-              return `<div class="grid-square w-3.5 h-3.5 rounded-sm ${
-                isCompleted ? 'level-4' : ''
-              }" data-date="${fullDate}"></div>`;
+              const completedStyle = isCompleted
+                ? `style="background-color: ${theme.completed};"`
+                : '';
+              return `<div class="grid-square w-3.5 h-3.5 rounded-sm" data-date="${fullDate}" ${completedStyle}></div>`;
             })
             .join('');
 
           card.innerHTML = `
                     <header class="card-header flex justify-between items-center mb-4">
                         <div class="flex items-center gap-3 w-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0_0_24_24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400 flex-shrink-0"><path d="M22_11.08V12a10_10_0_1_1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400 flex-shrink-0"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                             <span class="habit-name font-semibold truncate cursor-pointer">${
                               habit.name
                             }</span>
@@ -267,7 +298,7 @@
                             }">
                         </div>
                         <button class="options-btn p-1 rounded-full hover:bg-zinc-700 flex-shrink-0">
-                             <svg class="pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0_0_24_24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                             <svg class="pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
                         </button>
                     </header>
                     <div class="card-body">
@@ -276,9 +307,12 @@
                         } flex justify-between">${weeklyViewDays}</div>
                         <div class="overview-view ${
                           isWeekly ? 'hidden' : ''
-                        } grid grid-cols-20 gap-1 place-content-center" style="grid-template-columns: repeat(20, minmax(0, 1fr));">${overviewViewSquares}</div>
+                        } grid gap-1 place-content-center" style="grid-template-columns: repeat(20, minmax(0, 1fr));">${overviewViewSquares}</div>
                     </div>`;
+
           cardContainer.appendChild(card);
+          // Set the title color to match the theme
+          card.querySelector('.habit-name').style.color = theme.completed;
         });
         saveHabits();
       };
@@ -288,15 +322,11 @@
         const overviewLabel = document.getElementById('overview-label');
         if (currentViewMode === 'weekly') {
           weeklyLabel.classList.add('text-white');
-          weeklyLabel.classList.remove('text-zinc-500');
           overviewLabel.classList.add('text-zinc-500');
-          overviewLabel.classList.remove('text-white');
           viewToggle.checked = false;
         } else {
           weeklyLabel.classList.add('text-zinc-500');
-          weeklyLabel.classList.remove('text-white');
           overviewLabel.classList.add('text-white');
-          overviewLabel.classList.remove('text-zinc-500');
           viewToggle.checked = true;
         }
         renderHabits();
@@ -315,17 +345,22 @@
           else habit.completedDates.add(date);
           renderHabits();
         } else if (target.matches('.habit-name')) {
+          const input = target.nextElementSibling;
           const span = target;
-          const input = span.nextElementSibling;
           span.classList.add('hidden');
           input.classList.remove('hidden');
+          // Temporarily remove color while editing for better visibility
+          input.style.color = '#E0E0E0';
           input.focus();
           input.select();
         } else if (target.matches('.options-btn')) {
           e.stopPropagation();
           contextMenu.style.display = 'block';
-          contextMenu.style.top = `${e.clientY}px`;
-          contextMenu.style.left = `${e.clientX - contextMenu.offsetWidth}px`;
+          const rect = target.getBoundingClientRect();
+          contextMenu.style.top = `${rect.bottom + window.scrollY + 5}px`;
+          contextMenu.style.left = `${
+            rect.right + window.scrollX - contextMenu.offsetWidth
+          }px`;
           contextMenu.dataset.habitId = habitId;
         }
       });
@@ -338,14 +373,11 @@
       cardContainer.addEventListener('focusout', e => {
         if (e.target.matches('.habit-input')) {
           const input = e.target;
-          const span = input.previousElementSibling;
-          const habitId = input.closest('.task-card').dataset.habitId;
-          const habit = habits.find(h => h.id === habitId);
-          habit.name = input.value || 'Untitled';
-          span.textContent = habit.name;
-          input.classList.add('hidden');
-          span.classList.remove('hidden');
-          saveHabits();
+          const habit = habits.find(
+            h => h.id === input.closest('.task-card').dataset.habitId
+          );
+          habit.name = input.value.trim() || 'Untitled';
+          renderHabits(); // Re-render to apply all styles correctly
         }
       });
 
@@ -353,12 +385,9 @@
         draggedItem = e.target;
         setTimeout(() => e.target.classList.add('dragging'), 0);
       });
-
-      cardContainer.addEventListener('dragend', e => {
-        draggedItem.classList.remove('dragging');
-        draggedItem = null;
-      });
-
+      cardContainer.addEventListener('dragend', e =>
+        e.target.classList.remove('dragging')
+      );
       cardContainer.addEventListener('dragover', e => {
         e.preventDefault();
         const afterElement = [
@@ -374,13 +403,9 @@
           { offset: Number.NEGATIVE_INFINITY }
         ).element;
 
-        if (afterElement == null) {
-          cardContainer.appendChild(draggedItem);
-        } else {
-          cardContainer.insertBefore(draggedItem, afterElement);
-        }
+        if (afterElement) cardContainer.insertBefore(draggedItem, afterElement);
+        else cardContainer.appendChild(draggedItem);
       });
-
       cardContainer.addEventListener('drop', () => {
         const newOrder = [...cardContainer.querySelectorAll('.task-card')].map(
           c => c.dataset.habitId
@@ -395,16 +420,20 @@
       });
 
       addActivityBtn.addEventListener('click', () => {
+        const colorKeys = Object.keys(COLOR_SETS);
+        const randomColor =
+          colorKeys[Math.floor(Math.random() * colorKeys.length)];
         habits.push({
           id: `habit-${Date.now()}`,
           name: 'New Activity',
           completedDates: new Set(),
+          color: randomColor,
         });
         renderHabits();
       });
 
       deleteAllBtn.addEventListener('click', () => {
-        habitIdToDelete = null; // Mode hapus semua
+        habitIdToDelete = null;
         modalTitle.textContent = 'Are you sure?';
         modalText.textContent =
           'This will permanently delete all activities. This action cannot be undone.';
@@ -413,22 +442,16 @@
 
       document
         .getElementById('cancel-delete-btn')
-        .addEventListener('click', () => {
-          modal.classList.add('hidden');
-          habitIdToDelete = null; // Reset
-        });
-
+        .addEventListener('click', () => modal.classList.add('hidden'));
       document
         .getElementById('confirm-delete-btn')
         .addEventListener('click', () => {
-          if (habitIdToDelete) {
+          if (habitIdToDelete)
             habits = habits.filter(h => h.id !== habitIdToDelete);
-          } else {
-            habits = [];
-          }
+          else habits = [];
           renderHabits();
           modal.classList.add('hidden');
-          habitIdToDelete = null; // Reset
+          habitIdToDelete = null;
         });
 
       contextMenu.addEventListener('click', e => {
@@ -436,10 +459,9 @@
         contextMenu.style.display = 'none';
 
         if (e.target.id === 'edit-btn') {
-          const card = cardContainer.querySelector(
-            `[data-habit-id="${habitId}"]`
+          const nameSpan = cardContainer.querySelector(
+            `[data-habit-id="${habitId}"] .habit-name`
           );
-          const nameSpan = card.querySelector('.habit-name');
           nameSpan.click();
         } else if (e.target.id === 'delete-btn') {
           habitIdToDelete = habitId;
@@ -447,11 +469,45 @@
           modalTitle.textContent = 'Delete Activity?';
           modalText.textContent = `Are you sure you want to delete "${habit.name}"? This action cannot be undone.`;
           modal.classList.remove('hidden');
+        } else if (e.target.id === 'change-color-btn') {
+          habitIdToColor = habitId;
+          const colorSwatchesContainer =
+            document.getElementById('color-swatches');
+          colorSwatchesContainer.innerHTML = '';
+          Object.entries(COLOR_SETS).forEach(([name, colors]) => {
+            const swatch = document.createElement('button');
+            swatch.className =
+              'w-10 h-10 rounded-full border-2 border-zinc-600 hover:opacity-80 transition-opacity';
+            swatch.style.backgroundColor = colors.completed;
+            swatch.dataset.color = name;
+            colorSwatchesContainer.appendChild(swatch);
+          });
+          colorModal.classList.remove('hidden');
         }
       });
 
-      document.addEventListener('click', () => {
-        if (contextMenu.style.display === 'block') {
+      document.getElementById('color-swatches').addEventListener('click', e => {
+        if (e.target.dataset.color) {
+          const habit = habits.find(h => h.id === habitIdToColor);
+          if (habit) habit.color = e.target.dataset.color;
+          renderHabits();
+          colorModal.classList.add('hidden');
+          habitIdToColor = null;
+        }
+      });
+
+      document
+        .getElementById('cancel-color-btn')
+        .addEventListener('click', () => {
+          colorModal.classList.add('hidden');
+          habitIdToColor = null;
+        });
+
+      document.addEventListener('click', e => {
+        if (
+          !contextMenu.contains(e.target) &&
+          !e.target.matches('.options-btn')
+        ) {
           contextMenu.style.display = 'none';
         }
       });
