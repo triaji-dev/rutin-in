@@ -235,7 +235,7 @@
         }).reverse();
 
       const getOverviewDays = () =>
-        Array.from({ length: 140 }, (_, i) => {
+        Array.from({ length: 126 }, (_, i) => {
           const d = new Date();
           d.setDate(d.getDate() - i);
           return d;
@@ -307,7 +307,7 @@
                         } flex justify-between">${weeklyViewDays}</div>
                         <div class="overview-view ${
                           isWeekly ? 'hidden' : ''
-                        } grid gap-1 place-content-center" style="grid-template-columns: repeat(20, minmax(0, 1fr));">${overviewViewSquares}</div>
+                        } grid grid-flow-col grid-rows-7 gap-1 place-content-center">${overviewViewSquares}</div>
                     </div>`;
 
           cardContainer.appendChild(card);
@@ -420,14 +420,11 @@
       });
 
       addActivityBtn.addEventListener('click', () => {
-        const colorKeys = Object.keys(COLOR_SETS);
-        const randomColor =
-          colorKeys[Math.floor(Math.random() * colorKeys.length)];
         habits.push({
           id: `habit-${Date.now()}`,
           name: 'New Activity',
           completedDates: new Set(),
-          color: randomColor,
+          color: 'gray',
         });
         renderHabits();
       });
