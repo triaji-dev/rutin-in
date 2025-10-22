@@ -1,0 +1,157 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+.version {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.task-card {
+  background-color: rgba(38, 38, 38, 0.7);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.task-card.select-mode-card {
+  cursor: pointer;
+}
+
+.task-card.select-mode-card:hover {
+  background-color: rgba(38, 38, 38, 0.85);
+}
+
+/* Selected card style - blue border */
+.task-card.select-mode-card.selected-card {
+  border-color: #3b82f6;
+  border-width: 1px;
+}
+
+/* Make specific elements transparent in select mode */
+.task-card.select-mode-card .habit-name {
+  opacity: 0.4;
+}
+
+.task-card.select-mode-card .date-circle {
+  opacity: 0.4;
+}
+
+.task-card.select-mode-card .weekly-view p,
+.task-card.select-mode-card .overview-view {
+  opacity: 0.4;
+}
+
+/* Tooltip styles */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background-color: #1f1f1f;
+  color: #e0e0e0;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+[data-tooltip]::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-2px);
+  border: 5px solid transparent;
+  border-top-color: #1f1f1f;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 100;
+}
+
+[data-tooltip]:hover::before,
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
+.weekly-view.hidden,
+.overview-view.hidden {
+  display: none;
+}
+
+.date-circle {
+  transition: all 0.2s ease;
+}
+.grid-square {
+  background-color: #2d2d2d;
+  transition: background-color 0.2s ease;
+}
+
+.dragging {
+  opacity: 0.5;
+  transform: scale(1.02);
+}
+.drag-over {
+  border-top: 2px dashed #4f4f4f;
+}
+
+.context-menu {
+  position: absolute;
+  z-index: 10;
+  background-color: #2a2a2a;
+  border: 1px solid #4f4f4f;
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  display: none; /* Hidden by default */
+}
+.context-menu button {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #e0e0e0;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.context-menu button:hover {
+  background-color: #3a3a3a;
+}
+.context-menu .delete-option {
+  color: #ef4444;
+}
+.habit-name {
+  transition: color 0.3s ease;
+}
+
+.select-mode-active {
+  background-color: #3b82f6 !important;
+}
+.select-mode-active svg {
+  stroke: white !important;
+}
+
+.card-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #3b82f6;
+  flex-shrink: 0;
+}

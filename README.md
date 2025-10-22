@@ -4,7 +4,7 @@
 
 A sleek, intuitive, and powerful habit tracker inspired by GitHub's contribution graph. Build lasting habits and track your progress with a visually motivating interface designed to keep you focused on what matters: showing up every day.
 
-![rutin.in](https://img.shields.io/badge/Status-Live-brightgreen) ![Version](https://img.shields.io/badge/Version-1.0.0-blue)
+![rutin.in](https://img.shields.io/badge/Status-Live-brightgreen) ![Version](https://img.shields.io/badge/Version-2.0.0-blue) ![Deployment](https://img.shields.io/badge/Deployment-Vercel-black) ![Database](https://img.shields.io/badge/Database-Supabase-green)
 
 ## ✨ Features
 
@@ -12,15 +12,17 @@ A sleek, intuitive, and powerful habit tracker inspired by GitHub's contribution
 
 - **Dual-View System**: Switch between Weekly and Overview modes instantly
 - **Interactive Tracking**: Click any day to toggle completion status
-- **Persistent Storage**: All data saved locally using localStorage
+- **Cloud Sync**: All data synchronized with Supabase database
+- **User Authentication**: Secure login/signup with Supabase Auth
+- **Multi-User Support**: Each user has their own private data
 - **Drag & Drop**: Reorder habits by dragging cards
 - **Bulk Operations**: Select multiple habits for batch actions
+- **Real-time Updates**: Changes sync instantly across devices
 
 ### 📊 View Modes
 
 #### Weekly View
 
-- **7-day focus**: Perfect for daily check-ins and short-term planning
 - **Interactive circles**: Click to mark days as complete
 - **Visual feedback**: Completed days show in your chosen color
 - **Day labels**: Clear weekday abbreviations for easy navigation
@@ -46,30 +48,41 @@ A sleek, intuitive, and powerful habit tracker inspired by GitHub's contribution
 - **Context Menu**: Right-click options for each habit
 - **Bulk Selection**: Select multiple habits for batch operations
 - **Delete Options**: Remove individual habits or clear all data
+- **User Profile**: Manage account settings and preferences
+- **Secure Logout**: Sign out with proper session cleanup
 
 ## 🚀 Quick Start
+
+### Live Demo
+
+Visit the live application at: **[rutin.in](https://rutin-in.vercel.app)**
 
 ### Installation
 
 1. Clone or download this repository
-2. Open `index.html` in your web browser
-3. Start tracking your habits immediately!
+2. Set up Supabase database (see [Deployment Guide](DEPLOYMENT.md))
+3. Configure environment variables
+4. Deploy to Vercel or run locally
 
 ### First Use
 
-1. Click "Add Activity" to create your first habit
-2. Click on any day in Weekly view to mark completion
-3. Toggle to Overview mode to see your progress pattern
-4. Use the context menu (three dots) to customize colors and manage habits
+1. **Sign Up**: Create a new account with email and password
+2. **Verify Email**: Check your email for verification link (if enabled)
+3. **Sign In**: Login with your credentials
+4. **Create Habits**: Click "Add Activity" to create your first habit
+5. **Start Tracking**: Click on any day in Weekly view to mark completion
+6. **Explore Views**: Toggle to Overview mode to see your progress pattern
 
 ## 💻 Technical Details
 
 ### Architecture
 
-- **Pure JavaScript**: No frameworks or dependencies
-- **ES6 Modules**: Modern JavaScript features
-- **Local Storage**: Client-side data persistence
-- **Responsive Design**: Mobile-first approach
+- **Frontend**: Pure JavaScript with modern ES6+ features
+- **Backend**: Vercel Serverless Functions (Node.js)
+- **Database**: Supabase (PostgreSQL) with Row Level Security
+- **Authentication**: Supabase Auth with JWT tokens
+- **Deployment**: Vercel with automatic CI/CD
+- **Styling**: Tailwind CSS with custom glassmorphic design
 
 ### Browser Support
 
@@ -81,21 +94,48 @@ A sleek, intuitive, and powerful habit tracker inspired by GitHub's contribution
 ### Data Structure
 
 ```javascript
+// User Object
 {
-  id: 'habit-1234567890',
+  id: 'uuid',
+  email: 'user@example.com',
+  full_name: 'John Doe',
+  avatar_url: 'https://...',
+  created_at: '2025-01-15T10:30:00Z'
+}
+
+// Habit Object
+{
+  id: 'uuid',
   name: 'Exercise',
+  color: 'green',
   completedDates: Set(['2025-01-15', '2025-01-16']),
-  color: 'green'
+  createdAt: '2025-01-15T10:30:00Z',
+  updatedAt: '2025-01-15T10:30:00Z'
+}
+
+// API Response Format
+{
+  habits: [
+    {
+      id: 'uuid',
+      name: 'Exercise',
+      color: 'green',
+      completed_dates: ['2025-01-15', '2025-01-16'],
+      created_at: '2025-01-15T10:30:00Z',
+      updated_at: '2025-01-15T10:30:00Z'
+    }
+  ]
 }
 ```
 
 ### Key Technologies
 
-- **HTML5**: Semantic markup and modern APIs
-- **CSS3**: Flexbox, Grid, Backdrop Filter, Custom Properties
-- **JavaScript ES6+**: Modules, Classes, Arrow Functions, Destructuring
-- **Tailwind CSS**: Utility-first styling framework
-- **Inter Font**: Clean, readable typography
+- **Frontend**: HTML5, CSS3, JavaScript ES6+, Tailwind CSS
+- **Backend**: Node.js, Vercel Serverless Functions
+- **Database**: PostgreSQL (Supabase), Row Level Security
+- **Authentication**: Supabase Auth, JWT tokens
+- **Deployment**: Vercel, Git-based CI/CD
+- **Styling**: Tailwind CSS, Glassmorphic design, Inter font
 
 ## 🎮 Usage Guide
 
