@@ -32,13 +32,11 @@
         background-color: rgba(38, 38, 38, 0.85);
       }
 
-      /* Selected card style - blue border */
       .task-card.select-mode-card.selected-card {
         border-color: #3b82f6;
         border-width: 1px;
       }
 
-      /* Make specific elements transparent in select mode */
       .task-card.select-mode-card .habit-name {
         opacity: 0.4;
       }
@@ -52,7 +50,6 @@
         opacity: 0.4;
       }
 
-      /* Tooltip styles */
       [data-tooltip] {
         position: relative;
       }
@@ -124,7 +121,7 @@
         border-radius: 8px;
         padding: 4px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-        display: none; /* Hidden by default */
+        display: none;
       }
       .context-menu button {
         display: block;
@@ -161,198 +158,353 @@
         accent-color: #3b82f6;
         flex-shrink: 0;
       }
+
+      .auth-modal {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .auth-form {
+        background-color: #2a2a2a;
+        border-radius: 12px;
+        padding: 2rem;
+        width: 100%;
+        max-width: 400px;
+        margin: 1rem;
+      }
+
+      .loading {
+        opacity: 0.6;
+        pointer-events: none;
+      }
     </style>
   </head>
   <body class="bg-zinc-900">
-    <div class="container mx-auto max-w-sm p-4 pt-6">
-      <header class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-white">rutin.in</h1>
-        <div class="flex items-center gap-4">
-          <div class="flex items-center gap-2 text-sm">
-            <span id="weekly-label" class="text-white">Weekly</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" id="view-toggle" class="sr-only peer" />
-              <div
-                class="w-11 h-6 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"
-              ></div>
-            </label>
-            <span id="overview-label" class="text-zinc-500">Overview</span>
-          </div>
-        </div>
-      </header>
-
-      <!-- Bulk Actions Bar (hidden by default) -->
-      <div
-        id="bulk-actions-bar"
-        class="hidden mb-4 rounded-2xl p-1 flex justify-center items-stretch gap-1 bg-zinc-800"
-      >
-        <button
-          id="bulk-change-color-btn"
-          class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-blue-400"
-          data-tooltip="Change Color"
+    <!-- Authentication Modal -->
+    <div id="auth-modal" class="auth-modal hidden">
+      <div class="auth-form">
+        <h2
+          id="auth-title"
+          class="text-2xl font-bold text-white mb-6 text-center"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-paintbrush-vertical-icon lucide-paintbrush-vertical"
-          >
-            <path d="M10 2v2" />
-            <path d="M14 2v4" />
-            <path d="M17 2a1 1 0 0 1 1 1v9H6V3a1 1 0 0 1 1-1z" />
-            <path
-              d="M6 12a1 1 0 0 0-1 1v1a2 2 0 0 0 2 2h2a1 1 0 0 1 1 1v2.9a2 2 0 1 0 4 0V17a1 1 0 0 1 1-1h2a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1"
+          Welcome to rutin.in
+        </h2>
+
+        <!-- Login Form -->
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label
+              for="login-email"
+              class="block text-sm font-medium text-gray-300 mb-2"
+              >Email</label
+            >
+            <input
+              type="email"
+              id="login-email"
+              required
+              class="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
             />
-          </svg>
-        </button>
-        <button
-          id="bulk-delete-btn"
-          class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-red-400"
-          data-tooltip="Delete Selected"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            class="mx-auto"
+          </div>
+          <div>
+            <label
+              for="login-password"
+              class="block text-sm font-medium text-gray-300 mb-2"
+              >Password</label
+            >
+            <input
+              type="password"
+              id="login-password"
+              required
+              class="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
           >
-            <path d="M3 6h18"></path>
-            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-          </svg>
-        </button>
-        <button
-          id="select-all-btn"
-          class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-green-400"
-          data-tooltip="Select All"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            class="mx-auto"
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-            <path d="M9 11l3 3L22 4"></path>
-          </svg>
-        </button>
-        <button
-          id="unselect-all-btn"
-          class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-yellow-400"
-          data-tooltip="Unselect All"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            class="mx-auto"
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-          </svg>
-        </button>
-        <button
-          id="exit-select-mode-btn"
-          class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-zinc-400"
-          data-tooltip="Exit Select Mode"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            class="mx-auto"
-          >
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
+            Sign In
+          </button>
+        </form>
 
-      <div id="card-container" class="space-y-4"></div>
+        <!-- Signup Form -->
+        <form id="signup-form" class="space-y-4 hidden">
+          <div>
+            <label
+              for="signup-name"
+              class="block text-sm font-medium text-gray-300 mb-2"
+              >Full Name</label
+            >
+            <input
+              type="text"
+              id="signup-name"
+              class="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label
+              for="signup-email"
+              class="block text-sm font-medium text-gray-300 mb-2"
+              >Email</label
+            >
+            <input
+              type="email"
+              id="signup-email"
+              required
+              class="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label
+              for="signup-password"
+              class="block text-sm font-medium text-gray-300 mb-2"
+              >Password</label
+            >
+            <input
+              type="password"
+              id="signup-password"
+              required
+              minlength="6"
+              class="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+          >
+            Sign Up
+          </button>
+        </form>
 
-      <div class="mt-6">
-        <button
-          id="add-activity-btn"
-          class="w-full bg-zinc-800 border border-dashed border-zinc-600 hover:bg-zinc-700 text-zinc-400 py-3 rounded-lg transition-colors"
-        >
-          + Add Activity
-        </button>
+        <div class="text-center mt-4">
+          <button
+            id="toggle-auth"
+            class="text-blue-400 hover:text-blue-300 text-sm"
+          >
+            Don't have an account? Sign up
+          </button>
+        </div>
+
+        <div
+          id="auth-error"
+          class="mt-4 text-red-400 text-sm text-center hidden"
+        ></div>
       </div>
     </div>
 
-    <div
-      id="confirm-modal"
-      class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center hidden z-50"
-    >
-      <div class="bg-zinc-800 rounded-lg p-6 w-full max-w-xs text-center mx-4">
-        <h3 id="modal-title" class="font-bold text-lg mb-2">Are you sure?</h3>
-        <p id="modal-text" class="text-zinc-400 mb-6 text-sm">
-          This action cannot be undone.
-        </p>
-        <div class="flex justify-center gap-4">
+    <!-- Main App -->
+    <div id="main-app" class="hidden">
+      <div class="container mx-auto max-w-sm p-4 pt-6">
+        <header class="flex justify-between items-center mb-6">
+          <div class="flex items-center gap-3">
+            <h1 class="text-2xl font-bold text-white">rutin.in</h1>
+            <div id="user-info" class="text-sm text-gray-400"></div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 text-sm">
+              <span id="weekly-label" class="text-white">Weekly</span>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="view-toggle" class="sr-only peer" />
+                <div
+                  class="w-11 h-6 bg-zinc-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"
+                ></div>
+              </label>
+              <span id="overview-label" class="text-zinc-500">Overview</span>
+            </div>
+            <button
+              id="logout-btn"
+              class="text-sm text-gray-400 hover:text-white"
+            >
+              Logout
+            </button>
+          </div>
+        </header>
+
+        <!-- Bulk Actions Bar -->
+        <div
+          id="bulk-actions-bar"
+          class="hidden mb-4 rounded-2xl p-1 flex justify-center items-stretch gap-1 bg-zinc-800"
+        >
           <button
-            id="cancel-delete-btn"
-            class="bg-zinc-600 hover:bg-zinc-500 text-white font-bold py-2 px-6 rounded-lg"
+            id="bulk-change-color-btn"
+            class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-blue-400"
+            data-tooltip="Change Color"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M10 2v2" />
+              <path d="M14 2v4" />
+              <path d="M17 2a1 1 0 0 1 1 1v9H6V3a1 1 0 0 1 1-1z" />
+              <path
+                d="M6 12a1 1 0 0 0-1 1v1a2 2 0 0 0 2 2h2a1 1 0 0 1 1 1v2.9a2 2 0 1 0 4 0V17a1 1 0 0 1 1-1h2a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1"
+              />
+            </svg>
+          </button>
+          <button
+            id="bulk-delete-btn"
+            class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-red-400"
+            data-tooltip="Delete Selected"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="mx-auto"
+            >
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+            </svg>
+          </button>
+          <button
+            id="select-all-btn"
+            class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-green-400"
+            data-tooltip="Select All"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="mx-auto"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <path d="M9 11l3 3L22 4"></path>
+            </svg>
+          </button>
+          <button
+            id="unselect-all-btn"
+            class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-yellow-400"
+            data-tooltip="Unselect All"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="mx-auto"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            </svg>
+          </button>
+          <button
+            id="exit-select-mode-btn"
+            class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-zinc-400"
+            data-tooltip="Exit Select Mode"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="mx-auto"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div id="card-container" class="space-y-4"></div>
+
+        <div class="mt-6">
+          <button
+            id="add-activity-btn"
+            class="w-full bg-zinc-800 border border-dashed border-zinc-600 hover:bg-zinc-700 text-zinc-400 py-3 rounded-lg transition-colors"
+          >
+            + Add Activity
+          </button>
+        </div>
+      </div>
+
+      <!-- Modals -->
+      <div
+        id="confirm-modal"
+        class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center hidden z-50"
+      >
+        <div
+          class="bg-zinc-800 rounded-lg p-6 w-full max-w-xs text-center mx-4"
+        >
+          <h3 id="modal-title" class="font-bold text-lg mb-2">Are you sure?</h3>
+          <p id="modal-text" class="text-zinc-400 mb-6 text-sm">
+            This action cannot be undone.
+          </p>
+          <div class="flex justify-center gap-4">
+            <button
+              id="cancel-delete-btn"
+              class="bg-zinc-600 hover:bg-zinc-500 text-white font-bold py-2 px-6 rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              id="confirm-delete-btn"
+              class="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-6 rounded-lg"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="color-modal"
+        class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center hidden z-50"
+      >
+        <div
+          class="bg-zinc-800 rounded-lg p-6 w-full max-w-xs text-center mx-4"
+        >
+          <h3 class="font-bold text-lg mb-4">Choose a Color</h3>
+          <div id="color-swatches" class="flex justify-center gap-3 flex-wrap">
+            <!-- Color swatches are generated here by JS -->
+          </div>
+          <button
+            id="cancel-color-btn"
+            class="mt-6 bg-zinc-600 hover:bg-zinc-500 text-white font-bold py-2 px-6 rounded-lg w-full"
           >
             Cancel
           </button>
-          <button
-            id="confirm-delete-btn"
-            class="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-6 rounded-lg"
-          >
-            Delete
-          </button>
         </div>
       </div>
-    </div>
 
-    <div
-      id="color-modal"
-      class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center hidden z-50"
-    >
-      <div class="bg-zinc-800 rounded-lg p-6 w-full max-w-xs text-center mx-4">
-        <h3 class="font-bold text-lg mb-4">Choose a Color</h3>
-        <div id="color-swatches" class="flex justify-center gap-3 flex-wrap">
-          <!-- Color swatches are generated here by JS -->
-        </div>
-        <button
-          id="cancel-color-btn"
-          class="mt-6 bg-zinc-600 hover:bg-zinc-500 text-white font-bold py-2 px-6 rounded-lg w-full"
-        >
-          Cancel
-        </button>
+      <div id="context-menu" class="context-menu w-36">
+        <button id="edit-btn">Edit</button>
+        <button id="change-color-btn">Change Color</button>
+        <button id="select-mode-menu-btn">Select Mode</button>
+        <button id="delete-btn" class="delete-option">Delete</button>
       </div>
-    </div>
-
-    <div id="context-menu" class="context-menu w-36">
-      <button id="edit-btn">Edit</button>
-      <button id="change-color-btn">Change Color</button>
-      <button id="select-mode-menu-btn">Select Mode</button>
-      <button id="delete-btn" class="delete-option">Delete</button>
     </div>
 
     <script type="module">
+      // Configuration
+      const API_BASE_URL = window.location.origin + '/api';
+
+      // State
       let habits = [];
       let currentViewMode = 'weekly';
       let draggedItem = null;
@@ -360,6 +512,8 @@
       let habitIdToColor = null;
       let selectMode = false;
       let selectedHabits = new Set();
+      let currentUser = null;
+      let accessToken = null;
 
       const COLOR_SETS = {
         green: { completed: '#39d353' },
@@ -374,6 +528,16 @@
         gray: { completed: '#a1a1aa' },
       };
 
+      // DOM Elements
+      const authModal = document.getElementById('auth-modal');
+      const mainApp = document.getElementById('main-app');
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+      const toggleAuth = document.getElementById('toggle-auth');
+      const authTitle = document.getElementById('auth-title');
+      const authError = document.getElementById('auth-error');
+      const userInfo = document.getElementById('user-info');
+      const logoutBtn = document.getElementById('logout-btn');
       const cardContainer = document.getElementById('card-container');
       const viewToggle = document.getElementById('view-toggle');
       const addActivityBtn = document.getElementById('add-activity-btn');
@@ -391,46 +555,89 @@
       const unselectAllBtn = document.getElementById('unselect-all-btn');
       const exitSelectModeBtn = document.getElementById('exit-select-mode-btn');
 
-      const saveHabits = () =>
-        localStorage.setItem(
-          'habits',
-          JSON.stringify(
-            habits.map(h => ({
-              ...h,
-              completedDates: Array.from(h.completedDates),
-            }))
-          )
-        );
-
-      const loadHabits = () => {
-        const stored = localStorage.getItem('habits');
-        if (stored) {
-          habits = JSON.parse(stored).map(h => ({
-            ...h,
-            completedDates: new Set(h.completedDates),
-            color: h.color || 'green',
-          }));
-        } else {
-          // Create default habit with properly formatted dates
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const twoDaysAgo = new Date(today);
-          twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
-
-          habits = [
-            {
-              id: 'habit-1',
-              name: 'Membaca Buku',
-              completedDates: new Set([
-                formatDate(today),
-                formatDate(twoDaysAgo),
-              ]),
-              color: 'green',
+      // API Functions
+      const api = {
+        async request(endpoint, options = {}) {
+          const url = `${API_BASE_URL}${endpoint}`;
+          const config = {
+            headers: {
+              'Content-Type': 'application/json',
+              ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+              ...options.headers,
             },
-          ];
-        }
+            ...options,
+          };
+
+          try {
+            const response = await fetch(url, config);
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw new Error(data.error || 'API request failed');
+            }
+
+            return data;
+          } catch (error) {
+            console.error('API Error:', error);
+            throw error;
+          }
+        },
+
+        async login(email, password) {
+          return this.request('/auth/login', {
+            method: 'POST',
+            body: JSON.stringify({ email, password }),
+          });
+        },
+
+        async signup(email, password, full_name) {
+          return this.request('/auth/signup', {
+            method: 'POST',
+            body: JSON.stringify({ email, password, full_name }),
+          });
+        },
+
+        async logout() {
+          return this.request('/auth/logout', {
+            method: 'POST',
+            body: JSON.stringify({ access_token: accessToken }),
+          });
+        },
+
+        async getHabits() {
+          const data = await this.request('/habits');
+          return data.habits;
+        },
+
+        async createHabit(name, color) {
+          return this.request('/habits', {
+            method: 'POST',
+            body: JSON.stringify({ name, color }),
+          });
+        },
+
+        async updateHabit(id, updates) {
+          return this.request(`/habits/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(updates),
+          });
+        },
+
+        async deleteHabit(id) {
+          return this.request(`/habits/${id}`, {
+            method: 'DELETE',
+          });
+        },
+
+        async toggleCompletion(habitId, date) {
+          return this.request(`/habits/${habitId}/completions`, {
+            method: 'POST',
+            body: JSON.stringify({ date }),
+          });
+        },
       };
 
+      // Utility Functions
       const formatDate = d => {
         const year = d.getFullYear();
         const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -441,7 +648,7 @@
       const getWeekDays = () =>
         Array.from({ length: 7 }, (_, i) => {
           const d = new Date();
-          d.setHours(0, 0, 0, 0); // Reset time to midnight
+          d.setHours(0, 0, 0, 0);
           d.setDate(d.getDate() - i);
           return d;
         }).reverse();
@@ -449,17 +656,75 @@
       const getOverviewDays = () =>
         Array.from({ length: 126 }, (_, i) => {
           const d = new Date();
-          d.setHours(0, 0, 0, 0); // Reset time to midnight
+          d.setHours(0, 0, 0, 0);
           d.setDate(d.getDate() - i);
           return d;
         }).reverse();
+
+      // Authentication Functions
+      const showAuthModal = () => {
+        authModal.classList.remove('hidden');
+        mainApp.classList.add('hidden');
+      };
+
+      const hideAuthModal = () => {
+        authModal.classList.add('hidden');
+        mainApp.classList.remove('hidden');
+      };
+
+      const showError = message => {
+        authError.textContent = message;
+        authError.classList.remove('hidden');
+      };
+
+      const hideError = () => {
+        authError.classList.add('hidden');
+      };
+
+      const updateUserInfo = () => {
+        if (currentUser) {
+          userInfo.textContent = currentUser.email;
+        }
+      };
+
+      const checkAuth = () => {
+        const stored = localStorage.getItem('rutin_user');
+        if (stored) {
+          const userData = JSON.parse(stored);
+          currentUser = userData.user;
+          accessToken = userData.session?.access_token;
+
+          if (accessToken) {
+            hideAuthModal();
+            updateUserInfo();
+            loadHabits();
+            return true;
+          }
+        }
+        showAuthModal();
+        return false;
+      };
+
+      // Habit Management Functions
+      const loadHabits = async () => {
+        try {
+          const habitsData = await api.getHabits();
+          habits = habitsData.map(h => ({
+            ...h,
+            completedDates: new Set(h.completedDates || []),
+          }));
+          renderHabits();
+        } catch (error) {
+          console.error('Failed to load habits:', error);
+          showError('Failed to load habits. Please try again.');
+        }
+      };
 
       const renderHabits = () => {
         cardContainer.innerHTML = '';
         habits.forEach(habit => {
           const card = document.createElement('article');
 
-          // Build class names
           let className = 'task-card rounded-2xl p-4 shadow-lg';
           if (selectMode) {
             className += ' select-mode-card';
@@ -538,12 +803,8 @@
                     </div>`;
 
           cardContainer.appendChild(card);
-
-          // Set the title color to match the theme
           card.querySelector('.habit-name').style.color = theme.completed;
         });
-
-        saveHabits();
       };
 
       const toggleSelectMode = () => {
@@ -574,22 +835,96 @@
         renderHabits();
       };
 
-      cardContainer.addEventListener('click', e => {
+      // Event Listeners
+      loginForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        hideError();
+
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        try {
+          const data = await api.login(email, password);
+          currentUser = data.user;
+          accessToken = data.session?.access_token;
+
+          localStorage.setItem('rutin_user', JSON.stringify(data));
+          hideAuthModal();
+          updateUserInfo();
+          loadHabits();
+        } catch (error) {
+          showError(error.message);
+        }
+      });
+
+      signupForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        hideError();
+
+        const name = document.getElementById('signup-name').value;
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
+
+        try {
+          const data = await api.signup(email, password, name);
+          showError(
+            'Account created! Please check your email for verification, then sign in.'
+          );
+
+          // Switch to login form
+          toggleAuth.click();
+        } catch (error) {
+          showError(error.message);
+        }
+      });
+
+      toggleAuth.addEventListener('click', () => {
+        const isLogin = loginForm.classList.contains('hidden');
+
+        if (isLogin) {
+          // Switch to login
+          loginForm.classList.remove('hidden');
+          signupForm.classList.add('hidden');
+          authTitle.textContent = 'Welcome back';
+          toggleAuth.textContent = "Don't have an account? Sign up";
+        } else {
+          // Switch to signup
+          loginForm.classList.add('hidden');
+          signupForm.classList.remove('hidden');
+          authTitle.textContent = 'Create your account';
+          toggleAuth.textContent = 'Already have an account? Sign in';
+        }
+        hideError();
+      });
+
+      logoutBtn.addEventListener('click', async () => {
+        try {
+          await api.logout();
+        } catch (error) {
+          console.error('Logout error:', error);
+        } finally {
+          localStorage.removeItem('rutin_user');
+          currentUser = null;
+          accessToken = null;
+          habits = [];
+          showAuthModal();
+        }
+      });
+
+      cardContainer.addEventListener('click', async e => {
         const target = e.target;
         const card = target.closest('.task-card');
         if (!card) return;
         const habitId = card.dataset.habitId;
 
-        // In select mode, clicking anywhere on card toggles selection (except options button)
         if (selectMode) {
           if (
             target.matches('.options-btn') ||
             target.closest('.options-btn')
           ) {
-            return; // Allow options button to work normally
+            return;
           }
 
-          // Toggle selection
           if (selectedHabits.has(habitId)) {
             selectedHabits.delete(habitId);
           } else {
@@ -602,19 +937,23 @@
 
         if (target.matches('.date-circle')) {
           const date = target.dataset.date;
-          const habit = habits.find(h => h.id === habitId);
-          if (habit.completedDates.has(date)) {
-            habit.completedDates.delete(date);
-          } else {
-            habit.completedDates.add(date);
+          try {
+            await api.toggleCompletion(habitId, date);
+            const habit = habits.find(h => h.id === habitId);
+            if (habit.completedDates.has(date)) {
+              habit.completedDates.delete(date);
+            } else {
+              habit.completedDates.add(date);
+            }
+            renderHabits();
+          } catch (error) {
+            console.error('Failed to toggle completion:', error);
           }
-          renderHabits();
         } else if (target.matches('.habit-name')) {
           const input = target.nextElementSibling;
           const span = target;
           span.classList.add('hidden');
           input.classList.remove('hidden');
-          // Temporarily remove color while editing for better visibility
           input.style.color = '#E0E0E0';
           input.focus();
           input.select();
@@ -635,79 +974,70 @@
           e.target.blur();
       });
 
-      cardContainer.addEventListener('focusout', e => {
+      cardContainer.addEventListener('focusout', async e => {
         if (e.target.matches('.habit-input')) {
           const input = e.target;
           const habit = habits.find(
             h => h.id === input.closest('.task-card').dataset.habitId
           );
-          habit.name = input.value.trim() || 'Untitled';
-          renderHabits(); // Re-render to apply all styles correctly
+          const newName = input.value.trim() || 'Untitled';
+
+          if (newName !== habit.name) {
+            try {
+              await api.updateHabit(habit.id, { name: newName });
+              habit.name = newName;
+              renderHabits();
+            } catch (error) {
+              console.error('Failed to update habit name:', error);
+              input.value = habit.name; // Revert on error
+            }
+          } else {
+            renderHabits();
+          }
         }
       });
 
-      cardContainer.addEventListener('dragstart', e => {
-        if (selectMode) {
-          e.preventDefault();
-          return;
-        }
-        draggedItem = e.target;
-        setTimeout(() => e.target.classList.add('dragging'), 0);
-      });
-      cardContainer.addEventListener('dragend', e =>
-        e.target.classList.remove('dragging')
-      );
-      cardContainer.addEventListener('dragover', e => {
-        e.preventDefault();
-        const afterElement = [
-          ...cardContainer.querySelectorAll('.task-card:not(.dragging)'),
-        ].reduce(
-          (closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = e.clientY - box.top - box.height / 2;
-            return offset < 0 && offset > closest.offset
-              ? { offset: offset, element: child }
-              : closest;
-          },
-          { offset: Number.NEGATIVE_INFINITY }
-        ).element;
-
-        if (afterElement) cardContainer.insertBefore(draggedItem, afterElement);
-        else cardContainer.appendChild(draggedItem);
-      });
-      cardContainer.addEventListener('drop', () => {
-        const newOrder = [...cardContainer.querySelectorAll('.task-card')].map(
-          c => c.dataset.habitId
+      addActivityBtn.addEventListener('click', async () => {
+        const colorKeys = Object.keys(COLOR_SETS);
+        const lastCardColor =
+          habits.length > 0 ? habits[habits.length - 1].color : null;
+        let availableColors = colorKeys.filter(
+          color => color !== lastCardColor
         );
-        habits.sort((a, b) => newOrder.indexOf(a.id) - newOrder.indexOf(b.id));
-        saveHabits();
+        if (availableColors.length === 0) {
+          availableColors = colorKeys;
+        }
+        const randomColor =
+          availableColors[Math.floor(Math.random() * availableColors.length)];
+
+        try {
+          const newHabit = await api.createHabit('New Activity', randomColor);
+          habits.push({
+            ...newHabit,
+            completedDates: new Set(),
+          });
+          renderHabits();
+        } catch (error) {
+          console.error('Failed to create habit:', error);
+        }
       });
 
-      viewToggle.addEventListener('change', () => {
-        currentViewMode = viewToggle.checked ? 'overview' : 'weekly';
-        updateViewModeUI();
-      });
-
-      // Select All
+      // Bulk operations
       selectAllBtn.addEventListener('click', () => {
         selectedHabits.clear();
         habits.forEach(h => selectedHabits.add(h.id));
         renderHabits();
       });
 
-      // Unselect All
       unselectAllBtn.addEventListener('click', () => {
         selectedHabits.clear();
         renderHabits();
       });
 
-      // Exit Select Mode
       exitSelectModeBtn.addEventListener('click', toggleSelectMode);
 
-      // Bulk change color
       bulkChangeColorBtn.addEventListener('click', () => {
         if (selectedHabits.size === 0) return;
-
         habitIdToColor = 'bulk';
         const colorSwatchesContainer =
           document.getElementById('color-swatches');
@@ -723,10 +1053,8 @@
         colorModal.classList.remove('hidden');
       });
 
-      // Bulk delete
       bulkDeleteBtn.addEventListener('click', () => {
         if (selectedHabits.size === 0) return;
-
         habitIdToDelete = 'bulk';
         modalTitle.textContent = 'Delete Selected Activities?';
         modalText.textContent = `Are you sure you want to delete ${
@@ -737,59 +1065,8 @@
         modal.classList.remove('hidden');
       });
 
-      addActivityBtn.addEventListener('click', () => {
-        // Get random color from COLOR_SETS, but avoid the last card's color
-        const colorKeys = Object.keys(COLOR_SETS);
-        const lastCardColor =
-          habits.length > 0 ? habits[habits.length - 1].color : null;
-
-        let availableColors = colorKeys.filter(
-          color => color !== lastCardColor
-        );
-
-        // If all colors are filtered out (shouldn't happen with 10 colors), use all colors
-        if (availableColors.length === 0) {
-          availableColors = colorKeys;
-        }
-
-        const randomColor =
-          availableColors[Math.floor(Math.random() * availableColors.length)];
-
-        habits.push({
-          id: `habit-${Date.now()}`,
-          name: 'New Activity',
-          completedDates: new Set(),
-          color: randomColor,
-        });
-        renderHabits();
-      });
-
-      document
-        .getElementById('cancel-delete-btn')
-        .addEventListener('click', () => modal.classList.add('hidden'));
-      document
-        .getElementById('confirm-delete-btn')
-        .addEventListener('click', () => {
-          if (habitIdToDelete === 'bulk') {
-            // Delete all selected habits
-            habits = habits.filter(h => !selectedHabits.has(h.id));
-            selectedHabits.clear();
-            selectMode = false;
-            bulkActionsBar.classList.add('hidden');
-          } else if (habitIdToDelete) {
-            // Delete single habit
-            habits = habits.filter(h => h.id !== habitIdToDelete);
-          } else {
-            // Delete all habits
-            habits = [];
-          }
-
-          renderHabits();
-          modal.classList.add('hidden');
-          habitIdToDelete = null;
-        });
-
-      contextMenu.addEventListener('click', e => {
+      // Context menu
+      contextMenu.addEventListener('click', async e => {
         const habitId = contextMenu.dataset.habitId;
         contextMenu.style.display = 'none';
 
@@ -799,11 +1076,9 @@
           );
           nameSpan.click();
         } else if (e.target.id === 'select-mode-menu-btn') {
-          // Toggle select mode
           if (!selectMode) {
             toggleSelectMode();
           }
-          // Auto-select the card that was clicked
           selectedHabits.add(habitId);
           renderHabits();
         } else if (e.target.id === 'delete-btn') {
@@ -829,29 +1104,43 @@
         }
       });
 
-      document.getElementById('color-swatches').addEventListener('click', e => {
-        if (e.target.dataset.color) {
-          const selectedColor = e.target.dataset.color;
+      // Color selection
+      document
+        .getElementById('color-swatches')
+        .addEventListener('click', async e => {
+          if (e.target.dataset.color) {
+            const selectedColor = e.target.dataset.color;
 
-          if (habitIdToColor === 'bulk') {
-            // Apply color to all selected habits
-            habits.forEach(h => {
-              if (selectedHabits.has(h.id)) {
-                h.color = selectedColor;
+            try {
+              if (habitIdToColor === 'bulk') {
+                // Update all selected habits
+                const updatePromises = Array.from(selectedHabits).map(habitId =>
+                  api.updateHabit(habitId, { color: selectedColor })
+                );
+                await Promise.all(updatePromises);
+
+                habits.forEach(h => {
+                  if (selectedHabits.has(h.id)) {
+                    h.color = selectedColor;
+                  }
+                });
+              } else {
+                // Update single habit
+                await api.updateHabit(habitIdToColor, { color: selectedColor });
+                const habit = habits.find(h => h.id === habitIdToColor);
+                if (habit) habit.color = selectedColor;
               }
-            });
-          } else {
-            // Apply color to single habit
-            const habit = habits.find(h => h.id === habitIdToColor);
-            if (habit) habit.color = selectedColor;
+
+              renderHabits();
+              colorModal.classList.add('hidden');
+              habitIdToColor = null;
+            } catch (error) {
+              console.error('Failed to update color:', error);
+            }
           }
+        });
 
-          renderHabits();
-          colorModal.classList.add('hidden');
-          habitIdToColor = null;
-        }
-      });
-
+      // Modal handlers
       document
         .getElementById('cancel-color-btn')
         .addEventListener('click', () => {
@@ -859,6 +1148,48 @@
           habitIdToColor = null;
         });
 
+      document
+        .getElementById('cancel-delete-btn')
+        .addEventListener('click', () => {
+          modal.classList.add('hidden');
+        });
+
+      document
+        .getElementById('confirm-delete-btn')
+        .addEventListener('click', async () => {
+          try {
+            if (habitIdToDelete === 'bulk') {
+              // Delete all selected habits
+              const deletePromises = Array.from(selectedHabits).map(habitId =>
+                api.deleteHabit(habitId)
+              );
+              await Promise.all(deletePromises);
+
+              habits = habits.filter(h => !selectedHabits.has(h.id));
+              selectedHabits.clear();
+              selectMode = false;
+              bulkActionsBar.classList.add('hidden');
+            } else if (habitIdToDelete) {
+              // Delete single habit
+              await api.deleteHabit(habitIdToDelete);
+              habits = habits.filter(h => h.id !== habitIdToDelete);
+            }
+
+            renderHabits();
+            modal.classList.add('hidden');
+            habitIdToDelete = null;
+          } catch (error) {
+            console.error('Failed to delete habit:', error);
+          }
+        });
+
+      // View toggle
+      viewToggle.addEventListener('change', () => {
+        currentViewMode = viewToggle.checked ? 'overview' : 'weekly';
+        updateViewModeUI();
+      });
+
+      // Close context menu when clicking outside
       document.addEventListener('click', e => {
         if (
           !contextMenu.contains(e.target) &&
@@ -868,9 +1199,9 @@
         }
       });
 
+      // Initialize app
       document.addEventListener('DOMContentLoaded', () => {
-        loadHabits();
-        updateViewModeUI();
+        checkAuth();
       });
     </script>
   </body>

@@ -1,0 +1,25 @@
+{
+  "functions": {
+    "api/auth/login.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/auth/logout.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/habits/index.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/habits/[id].js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/habits/[id]/completions.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    }
+  ]
+}
