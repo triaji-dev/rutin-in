@@ -1,0 +1,23 @@
+// DOM element references
+export const elements = {
+  cardContainer: document.getElementById('card-container'),
+  viewToggle: document.getElementById('view-toggle'),
+  addActivityBtn: document.getElementById('add-activity-btn'),
+  modal: document.getElementById('confirm-modal'),
+  modalTitle: document.getElementById('modal-title'),
+  modalText: document.getElementById('modal-text'),
+  colorModal: document.getElementById('color-modal'),
+  contextMenu: document.getElementById('context-menu'),
+  bulkActionsBar: document.getElementById('bulk-actions-bar'),
+  bulkChangeColorBtn: document.getElementById('bulk-change-color-btn'),
+  bulkDeleteBtn: document.getElementById('bulk-delete-btn'),
+  selectAllBtn: document.getElementById('select-all-btn'),
+  unselectAllBtn: document.getElementById('unselect-all-btn'),
+  exitSelectModeBtn: document.getElementById('exit-select-mode-btn'),
+  weeklyLabel: document.getElementById('weekly-label'),
+  overviewLabel: document.getElementById('overview-label'),
+  cancelDeleteBtn: document.getElementById('cancel-delete-btn'),
+  confirmDeleteBtn: document.getElementById('confirm-delete-btn'),
+  colorSwatches: document.getElementById('color-swatches'),
+  cancelColorBtn: document.getElementById('cancel-color-btn'),
+};
