@@ -199,7 +199,8 @@ export const handleBulkDelete = () => {
 export const handleAddActivity = () => {
   const habits = getHabits();
   const colorKeys = Object.keys(COLOR_SETS);
-  const lastCardColor = habits.length > 0 ? habits[habits.length - 1].color : null;
+  const lastCardColor =
+    habits.length > 0 ? habits[habits.length - 1].color : null;
 
   let availableColors = colorKeys.filter(color => color !== lastCardColor);
   if (availableColors.length === 0) {

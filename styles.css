@@ -110,33 +110,62 @@ body {
   border-top: 2px dashed #4f4f4f;
 }
 
+/* ============================================
+   CONTEXT MENU COMPONENT
+   ============================================ */
+
 .context-menu {
   position: absolute;
-  z-index: 10;
-  background-color: #2a2a2a;
-  border: 1px solid #4f4f4f;
-  border-radius: 8px;
-  padding: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  display: none; /* Hidden by default */
+  z-index: 100;
+  background-color: #27272a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+  min-width: 9rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5),
+    0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  display: none;
+  animation: contextMenuSlideIn 0.15s ease;
 }
-.context-menu button {
+
+@keyframes contextMenuSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.context-menu-item {
   display: block;
   width: 100%;
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   text-align: left;
   background: none;
   border: none;
   color: #e0e0e0;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  transition: background-color 0.15s ease;
 }
-.context-menu button:hover {
-  background-color: #3a3a3a;
+
+.context-menu-item:hover {
+  background-color: #3f3f46;
 }
-.context-menu .delete-option {
+
+.context-menu-item.delete-option {
   color: #ef4444;
 }
+
+.context-menu-item.delete-option:hover {
+  background-color: rgba(239, 68, 68, 0.15);
+}
+
+/* Habit Name Transition */
 .habit-name {
   transition: color 0.3s ease;
 }
@@ -154,4 +183,373 @@ body {
   cursor: pointer;
   accent-color: #3b82f6;
   flex-shrink: 0;
+}
+
+/* ============================================
+   BUTTON COMPONENT SYSTEM
+   ============================================ */
+
+/* Base Button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Button Variants */
+.btn-primary {
+  background-color: #3f3f46;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #52525b;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: #a1a1aa;
+  border: 1px solid #52525b;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #27272a;
+  border-color: #71717a;
+}
+
+.btn-danger {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: #ef4444;
+}
+
+.btn-success {
+  background-color: #16a34a;
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  background-color: #22c55e;
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: #a1a1aa;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background-color: rgba(63, 63, 70, 0.5);
+}
+
+/* Button Sizes */
+.btn-sm {
+  padding: 0.375rem 1rem;
+  font-size: 0.75rem;
+}
+
+.btn-lg {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+}
+
+.btn-icon {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+/* Button with Icon */
+.btn svg {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+
+.btn-icon svg {
+  margin: 0;
+}
+
+/* Bulk Action Button */
+.bulk-action-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: none;
+  border: none;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bulk-action-btn:hover {
+  background-color: #3f3f46;
+}
+
+.bulk-action-btn svg {
+  margin: 0 auto;
+}
+
+.bulk-action-btn:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}
+
+/* Action Colors */
+.text-blue {
+  color: #3b82f6;
+}
+
+.text-red {
+  color: #ef4444;
+}
+
+.text-green {
+  color: #4ade80;
+}
+
+.text-yellow {
+  color: #facc15;
+}
+
+.text-gray {
+  color: #a1a1aa;
+}
+
+/* ============================================
+   MODAL COMPONENT SYSTEM
+   ============================================ */
+
+/* Modal Overlay */
+.modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.modal.hidden {
+  display: none;
+  opacity: 0;
+}
+
+/* Modal Content Box */
+.modal-content {
+  background-color: #27272a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 20rem;
+  text-align: center;
+  margin: 0 1rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalSlideIn 0.2s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Modal Header */
+.modal-header {
+  margin-bottom: 1rem;
+}
+
+.modal-title {
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: white;
+  line-height: 1.4;
+}
+
+.modal-text {
+  color: #a1a1aa;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* Modal Body */
+.modal-body {
+  margin-bottom: 1.5rem;
+}
+
+/* Modal Footer / Actions */
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.modal-actions .btn {
+  flex: 1;
+  min-width: 100px;
+}
+
+.modal-actions .btn.w-full {
+  flex: none;
+  width: 100%;
+}
+
+/* Modal Variants */
+.modal-sm .modal-content {
+  max-width: 16rem;
+}
+
+.modal-lg .modal-content {
+  max-width: 28rem;
+}
+
+/* Color Swatches Container (for color picker modal) */
+.color-swatches {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 0;
+}
+
+.color-swatch {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.color-swatch:focus {
+  outline: none;
+  border-color: white;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================
+   CONTAINER STYLES
+   ============================================ */
+
+/* Bulk Actions Bar */
+.bulk-actions-bar {
+  margin-bottom: 1rem;
+  border-radius: 1rem;
+  padding: 0.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 0.25rem;
+  background-color: #27272a;
+}
+
+.bulk-actions-bar.hidden {
+  display: none;
+}
+
+/* Add Activity Button */
+.add-activity-btn {
+  width: 100%;
+  background-color: #27272a;
+  border: 1px dashed #52525b;
+  color: #a1a1aa;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.add-activity-btn:hover {
+  background-color: #3f3f46;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.toggle-slider {
+  width: 2.75rem;
+  height: 1.5rem;
+  background-color: #3f3f46;
+  border-radius: 9999px;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.toggle-slider::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  background-color: white;
+  border-radius: 9999px;
+  height: 1.25rem;
+  width: 1.25rem;
+  transition: transform 0.2s ease;
+}
+
+.toggle-switch input:checked ~ .toggle-slider {
+  background-color: #16a34a;
+}
+
+.toggle-switch input:checked ~ .toggle-slider::after {
+  transform: translateX(1.25rem);
 }

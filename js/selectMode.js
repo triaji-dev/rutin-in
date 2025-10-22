@@ -1,8 +1,4 @@
-import {
-  setSelectMode,
-  getSelectMode,
-  clearSelectedHabits,
-} from './state.js';
+import { setSelectMode, getSelectMode, clearSelectedHabits } from './state.js';
 import { elements } from './elements.js';
 import { renderHabits } from './render.js';
 
