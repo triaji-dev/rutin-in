@@ -4,20 +4,20 @@
 
 A sleek, intuitive, and powerful habit tracker inspired by GitHub's contribution graph. Build lasting habits and track your progress with a visually motivating interface designed to keep you focused on what matters: showing up every day.
 
-![rutin.in](https://img.shields.io/badge/Status-Live-brightgreen) ![Version](https://img.shields.io/badge/Version-2.0.0-blue) ![Deployment](https://img.shields.io/badge/Deployment-Vercel-black) ![Database](https://img.shields.io/badge/Database-Supabase-green)
+![rutin.in](https://img.shields.io/badge/Status-Active-brightgreen) ![Version](https://img.shields.io/badge/Version-1.1-blue) ![Tech](https://img.shields.io/badge/Tech-Vanilla_JS-yellow) ![Storage](https://img.shields.io/badge/Storage-LocalStorage-orange)
 
 ## ✨ Features
 
 ### 🎯 Core Functionality
 
-- **Dual-View System**: Switch between Weekly and Overview modes instantly
+- **Dual-View System**: Switch between Weekly and Grid (Overview) modes instantly
 - **Interactive Tracking**: Click any day to toggle completion status
-- **Cloud Sync**: All data synchronized with Supabase database
-- **User Authentication**: Secure login/signup with Supabase Auth
-- **Multi-User Support**: Each user has their own private data
+- **LocalStorage Persistence**: All data saved locally in your browser
 - **Drag & Drop**: Reorder habits by dragging cards
-- **Bulk Operations**: Select multiple habits for batch actions
-- **Real-time Updates**: Changes sync instantly across devices
+- **Select Mode**: Bulk operations for managing multiple habits at once
+- **Context Menu**: Right-click for quick actions
+- **Inline Editing**: Click habit names to rename them
+- **Real-time Updates**: Changes save automatically to localStorage
 
 ### 📊 View Modes
 
@@ -27,7 +27,7 @@ A sleek, intuitive, and powerful habit tracker inspired by GitHub's contribution
 - **Visual feedback**: Completed days show in your chosen color
 - **Day labels**: Clear weekday abbreviations for easy navigation
 
-#### Overview Mode
+#### Grid Mode (Overview)
 
 - **GitHub-style grid**: 18-week (126 days) contribution graph
 - **Pattern visualization**: See your consistency patterns emerge
@@ -37,105 +37,160 @@ A sleek, intuitive, and powerful habit tracker inspired by GitHub's contribution
 ### 🎨 Customization
 
 - **10 Color Themes**: Green, Blue, Purple, Pink, Orange, Yellow, Teal, Red, Indigo, Gray
-- **Glassmorphic Design**: Modern dark theme with subtle glass effects
+- **Glassmorphic Design**: Modern dark theme with backdrop blur effects
 - **Responsive Layout**: Optimized for mobile and desktop
 - **Smooth Animations**: Polished transitions and hover effects
+- **Component System**: Reusable button and modal components
+- **SVG Icons**: Clean, scalable vector icons via sprite system
 
 ### 🔧 Management Tools
 
-- **Add Activities**: Create new habits with one click
-- **Edit Names**: Click habit names to rename them
-- **Context Menu**: Right-click options for each habit
-- **Bulk Selection**: Select multiple habits for batch operations
-- **Delete Options**: Remove individual habits or clear all data
-- **User Profile**: Manage account settings and preferences
-- **Secure Logout**: Sign out with proper session cleanup
+- **Add Activities**: Create new habits with one click (assigns random color)
+- **Edit Names**: Click habit names to rename them inline
+- **Context Menu**: Right-click for Edit, Change Color, Select Mode, and Delete
+- **Select Mode**: Multi-select habits for bulk operations
+- **Bulk Actions**: Change color or delete multiple habits at once
+- **Delete Confirmation**: Modal dialog prevents accidental deletions
+- **Color Picker Modal**: Visual color selection interface
+- **Keyboard Support**: Navigate and edit with keyboard
 
 ## 🚀 Quick Start
 
 ### Live Demo
 
-Visit the live application at: **[rutin.in](https://rutin-in.vercel.app)**
+Open `index.html` in your browser - no installation required! or Visit https://triaji-dev.github.io/rutin-in/
 
 ### Installation
 
 1. Clone or download this repository
-2. Set up Supabase database (see [Deployment Guide](DEPLOYMENT.md))
-3. Configure environment variables
-4. Deploy to Vercel or run locally
+2. Open `index.html` in a modern web browser
+3. Start tracking your habits immediately
 
 ### First Use
 
-1. **Sign Up**: Create a new account with email and password
-2. **Verify Email**: Check your email for verification link (if enabled)
-3. **Sign In**: Login with your credentials
-4. **Create Habits**: Click "Add Activity" to create your first habit
-5. **Start Tracking**: Click on any day in Weekly view to mark completion
-6. **Explore Views**: Toggle to Overview mode to see your progress pattern
+1. **Create Habits**: Click "+ Add Activity" to create your first habit
+2. **Rename**: Click the habit name to give it a meaningful name
+3. **Start Tracking**: Click on any day in Weekly view to mark completion
+4. **Explore Views**: Toggle to Grid mode to see your long-term progress
+5. **Customize**: Right-click habits to change colors or access more options
 
 ## 💻 Technical Details
 
 ### Architecture
 
-- **Frontend**: Pure JavaScript with modern ES6+ features
-- **Backend**: Vercel Serverless Functions (Node.js)
-- **Database**: Supabase (PostgreSQL) with Row Level Security
-- **Authentication**: Supabase Auth with JWT tokens
-- **Deployment**: Vercel with automatic CI/CD
-- **Styling**: Tailwind CSS with custom glassmorphic design
+- **Frontend**: Vanilla JavaScript with ES6+ modules
+- **Styling**: Hybrid approach - Tailwind CSS utilities + Custom component CSS
+- **Storage**: Browser LocalStorage for persistence
+- **Icons**: SVG sprite system for scalable icons
+- **Deployment**: Static hosting (no backend required)
+- **Modularity**: Organized into separate JavaScript modules
+
+### Code Structure
+
+```
+rutin-in/
+├── index.html              # Main HTML structure
+├── styles.css              # Custom CSS + Component system
+├── assets/
+│   └── icons/
+│       └── sprite.svg      # SVG icon sprite
+├── js/
+│   ├── app.js              # Main entry point
+│   ├── constants.js        # Color themes configuration
+│   ├── state.js            # State management (getters/setters)
+│   ├── elements.js         # DOM element references
+│   ├── utils.js            # Date utility functions
+│   ├── storage.js          # LocalStorage save/load
+│   ├── render.js           # UI rendering logic
+│   ├── selectMode.js       # Select mode toggle
+│   └── handlers.js         # Event handlers
+├── source/
+│   └── prompt.md           # Development documentation
+├── README.md               # This file
+└── COMPONENTS.md           # Component system documentation
+```
+
+### Module System
+
+**ES6 Modules** with clear separation of concerns:
+
+- **constants.js**: COLOR_SETS configuration
+- **state.js**: Centralized state with getters/setters (habits, viewMode, selectMode, etc.)
+- **elements.js**: DOM element references for easy access
+- **utils.js**: Pure functions for date manipulation
+- **storage.js**: LocalStorage persistence layer with default data
+- **render.js**: Renders habits in Weekly/Grid views
+- **selectMode.js**: Toggles select mode functionality
+- **handlers.js**: All event handlers (20+ functions)
+- **app.js**: Initializes app and wires event listeners
 
 ### Browser Support
 
-- Chrome 60+
-- Firefox 55+
-- Safari 12+
+- Chrome 60+ (ES6 modules support)
+- Firefox 60+
+- Safari 11+
 - Edge 79+
+
+**Requirements:** Modern browser with ES6 module support and LocalStorage
 
 ### Data Structure
 
 ```javascript
-// User Object
+// Habit Object (in memory)
 {
-  id: 'uuid',
-  email: 'user@example.com',
-  full_name: 'John Doe',
-  avatar_url: 'https://...',
-  created_at: '2025-01-15T10:30:00Z'
-}
-
-// Habit Object
-{
-  id: 'uuid',
+  id: 1234567890,                           // Timestamp-based ID
   name: 'Exercise',
   color: 'green',
   completedDates: Set(['2025-01-15', '2025-01-16']),
-  createdAt: '2025-01-15T10:30:00Z',
-  updatedAt: '2025-01-15T10:30:00Z'
+  createdAt: 1705320000000
 }
 
-// API Response Format
+// LocalStorage Format
 {
   habits: [
     {
-      id: 'uuid',
+      id: 1234567890,
       name: 'Exercise',
       color: 'green',
-      completed_dates: ['2025-01-15', '2025-01-16'],
-      created_at: '2025-01-15T10:30:00Z',
-      updated_at: '2025-01-15T10:30:00Z'
+      completedDates: ['2025-01-15', '2025-01-16'],  // Array (converted from Set)
+      createdAt: 1705320000000
     }
   ]
 }
+
+// State Management
+{
+  habits: [],                 // Array of habit objects
+  currentViewMode: 'weekly',  // 'weekly' | 'grid'
+  draggedItem: null,          // Currently dragged habit
+  habitIdToDelete: null,      // Habit pending deletion
+  habitIdToColor: null,       // Habit for color change
+  selectMode: false,          // Select mode active?
+  selectedHabits: Set()       // Set of selected habit IDs
+}
 ```
+
+### Component System
+
+Custom CSS component library built on top of Tailwind:
+
+- **Button Components**: `.btn`, `.btn-primary`, `.btn-danger`, `.btn-success`, `.btn-secondary`, `.btn-ghost`
+- **Modal Components**: `.modal`, `.modal-content`, `.modal-header`, `.modal-body`, `.modal-actions`
+- **Bulk Actions**: `.bulk-action-btn`, `.bulk-actions-bar`
+- **Context Menu**: `.context-menu`, `.context-menu-item`
+- **Toggle Switch**: `.toggle-switch`, `.toggle-slider`
+
+See [COMPONENTS.md](COMPONENTS.md) for full documentation.
 
 ### Key Technologies
 
-- **Frontend**: HTML5, CSS3, JavaScript ES6+, Tailwind CSS
-- **Backend**: Node.js, Vercel Serverless Functions
-- **Database**: PostgreSQL (Supabase), Row Level Security
-- **Authentication**: Supabase Auth, JWT tokens
-- **Deployment**: Vercel, Git-based CI/CD
-- **Styling**: Tailwind CSS, Glassmorphic design, Inter font
+- **Frontend**: HTML5, CSS3, JavaScript ES6+ Modules
+- **Styling**: Tailwind CSS (CDN) + Custom Component CSS
+- **Storage**: LocalStorage API
+- **Icons**: SVG Sprite System
+- **Font**: Google Fonts - Inter
+- **Build**: None required - pure static files
+- **Deployment**: Any static hosting (GitHub Pages, Netlify, Vercel, etc.)
 
 ## 🎮 Usage Guide
 
@@ -149,16 +204,17 @@ Visit the live application at: **[rutin.in](https://rutin-in.vercel.app)**
 ### Tracking Progress
 
 - **Weekly View**: Click day circles to toggle completion
-- **Overview View**: Visual representation of your consistency
+- **Grid View**: Visual representation of your consistency over 18 weeks
 - **Color Coding**: Each habit has its own color theme
-- **Real-time Updates**: Changes save automatically
+- **Auto-save**: Changes save automatically to localStorage
+- **Date Handling**: Uses UTC midnight for consistent date tracking
 
 ### Managing Habits
 
-- **Rename**: Click on the habit name
-- **Change Color**: Use context menu → "Change Color"
-- **Delete**: Use context menu → "Delete"
-- **Reorder**: Drag and drop cards to rearrange
+- **Rename**: Click on the habit name (contenteditable)
+- **Change Color**: Right-click → "Change Color" → Select from 10 colors
+- **Delete**: Right-click → "Delete" → Confirm in modal
+- **Reorder**: Drag and drop cards to rearrange (HTML5 Drag & Drop API)
 
 ### Bulk Operations
 
@@ -177,34 +233,144 @@ Visit the live application at: **[rutin.in](https://rutin-in.vercel.app)**
 
 ```
 rutin-in/
-├── index.html          # Main application file
-├── README.md           # This documentation
-└── temp/               # Development files
-    ├── mockup1.html    # Initial prototype
-    ├── mockup2.html    # Enhanced version
-    ├── mockup3.html    # Final mockup
-    └── prompt.md       # Development prompts
+├── index.html              # Main HTML with semantic structure
+├── styles.css              # Custom CSS + Component system (500+ lines)
+├── assets/
+│   └── icons/
+│       └── sprite.svg      # SVG icon definitions
+├── js/                     # Modular JavaScript architecture
+│   ├── app.js              # Entry point, event listener setup
+│   ├── constants.js        # COLOR_SETS configuration
+│   ├── state.js            # State management with getters/setters
+│   ├── elements.js         # DOM element references
+│   ├── utils.js            # Date utilities (formatDate, getWeekDays, etc.)
+│   ├── storage.js          # LocalStorage persistence layer
+│   ├── render.js           # UI rendering (renderHabits, updateViewModeUI)
+│   ├── selectMode.js       # Select mode toggle logic
+│   └── handlers.js         # 20+ event handler functions
+├── source/
+│   └── prompt.md           # Development prompts and history
+├── README.md               # This documentation
+└── COMPONENTS.md           # Component system guide
 ```
+
+### Module Overview
+
+**app.js** - Main Entry Point
+
+- Imports all modules
+- Initializes event listeners
+- Calls loadHabits() and updateViewModeUI() on DOMContentLoaded
+
+**constants.js** - Configuration
+
+- COLOR_SETS: 10 color themes with hex values
+
+**state.js** - State Management
+
+- Centralized state object
+- Getter/setter functions for each state property
+- Prevents direct state mutation
+
+**elements.js** - DOM References
+
+- All `getElementById` calls in one place
+- Easy to maintain and update
+
+**utils.js** - Pure Functions
+
+- formatDate: Converts Date to 'YYYY-MM-DD'
+- getWeekDays: Returns array of 7 days for current week
+- getOverviewDays: Returns array of 126 days for grid view
+
+**storage.js** - Persistence
+
+- saveHabits: Saves to localStorage (converts Set to Array)
+- loadHabits: Loads from localStorage (converts Array to Set)
+- Creates default "Membaca Buku" habit if empty
+
+**render.js** - UI Rendering
+
+- renderHabits: Main render function for both views
+- updateViewModeUI: Updates view toggle labels
+- Handles select mode styling
+
+**selectMode.js** - Feature Module
+
+- toggleSelectMode: Enters/exits select mode
+- Shows/hides bulk actions bar
+
+**handlers.js** - Event Handlers
+
+- handleCardClick: Card interaction logic
+- handleDragStart/End/Over/Drop: Drag & drop
+- handleViewToggle: Switch views
+- handleSelectAll/UnselectAll: Bulk selection
+- handleBulkChangeColor/Delete: Bulk operations
+- handleAddActivity: Create new habit
+- handleContextMenuClick: Context menu actions
+- handleColorSwatchClick: Color picker
+- Plus modal, keyboard, and document handlers
 
 ### Local Development
 
-1. Open `index.html` in your browser
-2. Use browser dev tools for debugging
-3. Data persists in localStorage
-4. No build process required
+1. Clone the repository
+2. Open `index.html` in a modern browser
+3. No build process or dependencies required
+4. Data persists in browser's localStorage
+5. Use browser DevTools for debugging
+
+### Making Changes
+
+**To add a new color:**
+
+1. Edit `js/constants.js` - add to COLOR_SETS
+2. Color automatically appears in color picker
+
+**To modify UI:**
+
+1. Edit `styles.css` for styling changes
+2. Edit `index.html` for structure changes
+3. Changes reflect immediately (refresh browser)
+
+**To add functionality:**
+
+1. Create handler function in `js/handlers.js`
+2. Wire up event listener in `js/app.js`
+3. Update state in `js/state.js` if needed
+4. Call render in `js/render.js` to update UI
 
 ### Customization
 
-- **Colors**: Modify `COLOR_SETS` object in JavaScript
-- **Styling**: Edit CSS variables and Tailwind classes
-- **Features**: Extend functionality by modifying the JavaScript modules
+**Colors**:
+
+- Modify `COLOR_SETS` in `js/constants.js`
+- Each color has a `completed` hex value
+
+**Styling**:
+
+- Edit `styles.css` for custom components
+- Tailwind utilities in HTML for quick changes
+- See `COMPONENTS.md` for component system
+
+**Features**:
+
+- Add handlers in `js/handlers.js`
+- Update state in `js/state.js`
+- Modify render logic in `js/render.js`
+
+**Icons**:
+
+- Add new icons to `assets/icons/sprite.svg`
+- Use via `<use href="./assets/icons/sprite.svg#icon-name">`
 
 ## 📱 Mobile Experience
 
-- **Touch-friendly**: Optimized for mobile interactions
-- **Responsive Design**: Adapts to all screen sizes
-- **Gesture Support**: Tap to interact, drag to reorder
-- **Offline Ready**: Works without internet connection
+- **Touch-friendly**: Large tap targets for mobile interactions
+- **Responsive Design**: Adapts to all screen sizes via Tailwind
+- **Gesture Support**: Tap to interact, long-press for context menu
+- **Offline Ready**: Works without internet (localStorage only)
+- **PWA-ready**: Can be enhanced to Progressive Web App
 
 ## 🎯 Design Philosophy
 
@@ -213,38 +379,82 @@ rutin-in/
 - Clean, uncluttered interface
 - Focus on essential features
 - Reduce cognitive load
+- No unnecessary animations or distractions
 
-### Motivation
+### Visual Motivation
 
-- Visual progress representation
-- Gamification through streaks
-- Immediate feedback on actions
+- GitHub-style contribution graph
+- Immediate visual feedback
+- Color-coded progress
+- Gamification through consistency visualization
+
+### Developer Experience
+
+- Modular architecture for easy maintenance
+- Clear separation of concerns
+- Well-documented component system
+- No build tools required
+- Pure vanilla JavaScript
 
 ### Accessibility
 
-- High contrast colors
+- High contrast dark theme
 - Clear visual hierarchy
 - Keyboard navigation support
+- Semantic HTML structure
+- ARIA-friendly modal dialogs
 
 ## 🔮 Future Enhancements
 
-- **Data Export**: Export habits to CSV/JSON
-- **Statistics**: Detailed analytics and insights
-- **Themes**: Additional color schemes and layouts
-- **Notifications**: Reminder system
-- **Sync**: Cloud backup and multi-device sync
-- **Social**: Share progress with friends
+### Planned Features
+
+- [ ] **Data Export/Import**: Export habits to JSON/CSV
+- [ ] **Statistics Dashboard**: Charts and insights
+- [ ] **Custom Themes**: Light mode and color scheme options
+- [ ] **Notifications**: Browser notifications for reminders
+- [ ] **Streak Counter**: Display current and longest streaks
+- [ ] **Notes**: Add notes to specific days
+
+### Possible Enhancements
+
+- [ ] **Cloud Sync**: Optional backend for multi-device sync
+- [ ] **Social Features**: Share progress with friends
+- [ ] **Categories**: Group habits by category
+- [ ] **Time Tracking**: Track time spent on habits
+- [ ] **Goals**: Set and track specific goals
+- [ ] **PWA**: Full Progressive Web App with offline support
+- [ ] **Undo/Redo**: Action history management
 
 ## 📄 License
 
-This project does not currently have a license file. Please contact the author for licensing information.
+MIT License - feel free to use, modify, and distribute.
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Here's how:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes following the modular architecture
+4. Test thoroughly in multiple browsers
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
+
+### Contribution Guidelines
+
+- Follow the existing code style
+- Keep modules focused and single-purpose
+- Update documentation (README.md, COMPONENTS.md)
+- Test on Chrome, Firefox, and Safari
+- Keep the bundle size small (no heavy dependencies)
 
 ## 📞 Support
 
-If you encounter any issues or have questions, please open an issue on GitHub.
+- **Issues**: Open an issue on GitHub for bugs or feature requests
 
 ---
+
+**Built using Vanilla JavaScript**
+
+_No frameworks. No build tools. Just clean, modular JavaScript._
