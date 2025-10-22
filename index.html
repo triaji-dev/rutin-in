@@ -24,6 +24,77 @@
         transition: all 0.3s ease;
       }
 
+      .task-card.select-mode-card {
+        cursor: pointer;
+      }
+
+      .task-card.select-mode-card:hover {
+        background-color: rgba(38, 38, 38, 0.85);
+      }
+
+      /* Selected card style - blue border */
+      .task-card.select-mode-card.selected-card {
+        border-color: #3b82f6;
+        border-width: 1px;
+      }
+
+      /* Make specific elements transparent in select mode */
+      .task-card.select-mode-card .habit-name {
+        opacity: 0.4;
+      }
+
+      .task-card.select-mode-card .date-circle {
+        opacity: 0.4;
+      }
+
+      .task-card.select-mode-card .weekly-view p,
+      .task-card.select-mode-card .overview-view {
+        opacity: 0.4;
+      }
+
+      /* Tooltip styles */
+      [data-tooltip] {
+        position: relative;
+      }
+
+      [data-tooltip]::before {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-8px);
+        background-color: #1f1f1f;
+        color: #e0e0e0;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+
+      [data-tooltip]::after {
+        content: '';
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-2px);
+        border: 5px solid transparent;
+        border-top-color: #1f1f1f;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 100;
+      }
+
+      [data-tooltip]:hover::before,
+      [data-tooltip]:hover::after {
+        opacity: 1;
+      }
+
       .weekly-view.hidden,
       .overview-view.hidden {
         display: none;
@@ -75,6 +146,21 @@
       .habit-name {
         transition: color 0.3s ease;
       }
+
+      .select-mode-active {
+        background-color: #3b82f6 !important;
+      }
+      .select-mode-active svg {
+        stroke: white !important;
+      }
+
+      .card-checkbox {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: #3b82f6;
+        flex-shrink: 0;
+      }
     </style>
   </head>
   <body class="bg-zinc-900">
@@ -95,6 +181,114 @@
         </div>
       </header>
 
+      <!-- Bulk Actions Bar (hidden by default) -->
+      <div
+        id="bulk-actions-bar"
+        class="hidden mb-4 rounded-2xl p-1 flex justify-center items-stretch gap-1 bg-zinc-800"
+      >
+        <button
+          id="bulk-change-color-btn"
+          class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-blue-400"
+          data-tooltip="Change Color"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-paintbrush-vertical-icon lucide-paintbrush-vertical"
+          >
+            <path d="M10 2v2" />
+            <path d="M14 2v4" />
+            <path d="M17 2a1 1 0 0 1 1 1v9H6V3a1 1 0 0 1 1-1z" />
+            <path
+              d="M6 12a1 1 0 0 0-1 1v1a2 2 0 0 0 2 2h2a1 1 0 0 1 1 1v2.9a2 2 0 1 0 4 0V17a1 1 0 0 1 1-1h2a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1"
+            />
+          </svg>
+        </button>
+        <button
+          id="bulk-delete-btn"
+          class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-red-400"
+          data-tooltip="Delete Selected"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            class="mx-auto"
+          >
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+          </svg>
+        </button>
+        <button
+          id="select-all-btn"
+          class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-green-400"
+          data-tooltip="Select All"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            class="mx-auto"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <path d="M9 11l3 3L22 4"></path>
+          </svg>
+        </button>
+        <button
+          id="unselect-all-btn"
+          class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-yellow-400"
+          data-tooltip="Unselect All"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            class="mx-auto"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          </svg>
+        </button>
+        <button
+          id="exit-select-mode-btn"
+          class="flex-1 py-3 px-4 rounded-xl hover:bg-zinc-700 transition-colors text-zinc-400"
+          data-tooltip="Exit Select Mode"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            class="mx-auto"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
       <div id="card-container" class="space-y-4"></div>
 
       <div class="mt-6">
@@ -103,14 +297,6 @@
           class="w-full bg-zinc-800 border border-dashed border-zinc-600 hover:bg-zinc-700 text-zinc-400 py-3 rounded-lg transition-colors"
         >
           + Add Activity
-        </button>
-      </div>
-      <div class="text-center mt-6">
-        <button
-          id="delete-all-btn"
-          class="text-sm text-red-500 hover:text-red-400"
-        >
-          Delete All Activities
         </button>
       </div>
     </div>
@@ -162,6 +348,7 @@
     <div id="context-menu" class="context-menu w-36">
       <button id="edit-btn">Edit</button>
       <button id="change-color-btn">Change Color</button>
+      <button id="select-mode-menu-btn">Select Mode</button>
       <button id="delete-btn" class="delete-option">Delete</button>
     </div>
 
@@ -171,6 +358,8 @@
       let draggedItem = null;
       let habitIdToDelete = null;
       let habitIdToColor = null;
+      let selectMode = false;
+      let selectedHabits = new Set();
 
       const COLOR_SETS = {
         green: { completed: '#39d353' },
@@ -187,13 +376,20 @@
 
       const cardContainer = document.getElementById('card-container');
       const viewToggle = document.getElementById('view-toggle');
-      const deleteAllBtn = document.getElementById('delete-all-btn');
       const addActivityBtn = document.getElementById('add-activity-btn');
       const modal = document.getElementById('confirm-modal');
       const modalTitle = document.getElementById('modal-title');
       const modalText = document.getElementById('modal-text');
       const colorModal = document.getElementById('color-modal');
       const contextMenu = document.getElementById('context-menu');
+      const bulkActionsBar = document.getElementById('bulk-actions-bar');
+      const bulkChangeColorBtn = document.getElementById(
+        'bulk-change-color-btn'
+      );
+      const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
+      const selectAllBtn = document.getElementById('select-all-btn');
+      const unselectAllBtn = document.getElementById('unselect-all-btn');
+      const exitSelectModeBtn = document.getElementById('exit-select-mode-btn');
 
       const saveHabits = () =>
         localStorage.setItem(
@@ -215,21 +411,37 @@
             color: h.color || 'green',
           }));
         } else {
+          // Create default habit with properly formatted dates
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const twoDaysAgo = new Date(today);
+          twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
           habits = [
             {
               id: 'habit-1',
               name: 'Membaca Buku',
-              completedDates: new Set(['2025-10-20', '2025-10-18']),
+              completedDates: new Set([
+                formatDate(today),
+                formatDate(twoDaysAgo),
+              ]),
               color: 'green',
             },
           ];
         }
       };
 
-      const formatDate = d => new Date(d).toISOString().split('T')[0];
+      const formatDate = d => {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
       const getWeekDays = () =>
         Array.from({ length: 7 }, (_, i) => {
           const d = new Date();
+          d.setHours(0, 0, 0, 0); // Reset time to midnight
           d.setDate(d.getDate() - i);
           return d;
         }).reverse();
@@ -237,6 +449,7 @@
       const getOverviewDays = () =>
         Array.from({ length: 126 }, (_, i) => {
           const d = new Date();
+          d.setHours(0, 0, 0, 0); // Reset time to midnight
           d.setDate(d.getDate() - i);
           return d;
         }).reverse();
@@ -245,9 +458,21 @@
         cardContainer.innerHTML = '';
         habits.forEach(habit => {
           const card = document.createElement('article');
-          card.className = 'task-card rounded-2xl p-4 shadow-lg cursor-grab';
+
+          // Build class names
+          let className = 'task-card rounded-2xl p-4 shadow-lg';
+          if (selectMode) {
+            className += ' select-mode-card';
+            if (selectedHabits.has(habit.id)) {
+              className += ' selected-card';
+            }
+          } else {
+            className += ' cursor-grab';
+          }
+
+          card.className = className;
           card.dataset.habitId = habit.id;
-          card.draggable = true;
+          card.draggable = !selectMode;
 
           const theme = COLOR_SETS[habit.color] || COLOR_SETS.green;
           const isWeekly = currentViewMode === 'weekly';
@@ -255,7 +480,9 @@
             ? 'cursor-pointer'
             : 'pointer-events-none';
 
-          const weeklyViewDays = getWeekDays()
+          const weekDays = getWeekDays();
+
+          const weeklyViewDays = weekDays
             .map(day => {
               const fullDate = formatDate(day);
               const isCompleted = habit.completedDates.has(fullDate);
@@ -311,10 +538,25 @@
                     </div>`;
 
           cardContainer.appendChild(card);
+
           // Set the title color to match the theme
           card.querySelector('.habit-name').style.color = theme.completed;
         });
+
         saveHabits();
+      };
+
+      const toggleSelectMode = () => {
+        selectMode = !selectMode;
+
+        if (selectMode) {
+          bulkActionsBar.classList.remove('hidden');
+        } else {
+          bulkActionsBar.classList.add('hidden');
+          selectedHabits.clear();
+        }
+
+        renderHabits();
       };
 
       const updateViewModeUI = () => {
@@ -338,11 +580,34 @@
         if (!card) return;
         const habitId = card.dataset.habitId;
 
+        // In select mode, clicking anywhere on card toggles selection (except options button)
+        if (selectMode) {
+          if (
+            target.matches('.options-btn') ||
+            target.closest('.options-btn')
+          ) {
+            return; // Allow options button to work normally
+          }
+
+          // Toggle selection
+          if (selectedHabits.has(habitId)) {
+            selectedHabits.delete(habitId);
+          } else {
+            selectedHabits.add(habitId);
+          }
+
+          renderHabits();
+          return;
+        }
+
         if (target.matches('.date-circle')) {
           const date = target.dataset.date;
           const habit = habits.find(h => h.id === habitId);
-          if (habit.completedDates.has(date)) habit.completedDates.delete(date);
-          else habit.completedDates.add(date);
+          if (habit.completedDates.has(date)) {
+            habit.completedDates.delete(date);
+          } else {
+            habit.completedDates.add(date);
+          }
           renderHabits();
         } else if (target.matches('.habit-name')) {
           const input = target.nextElementSibling;
@@ -382,6 +647,10 @@
       });
 
       cardContainer.addEventListener('dragstart', e => {
+        if (selectMode) {
+          e.preventDefault();
+          return;
+        }
         draggedItem = e.target;
         setTimeout(() => e.target.classList.add('dragging'), 0);
       });
@@ -419,22 +688,80 @@
         updateViewModeUI();
       });
 
+      // Select All
+      selectAllBtn.addEventListener('click', () => {
+        selectedHabits.clear();
+        habits.forEach(h => selectedHabits.add(h.id));
+        renderHabits();
+      });
+
+      // Unselect All
+      unselectAllBtn.addEventListener('click', () => {
+        selectedHabits.clear();
+        renderHabits();
+      });
+
+      // Exit Select Mode
+      exitSelectModeBtn.addEventListener('click', toggleSelectMode);
+
+      // Bulk change color
+      bulkChangeColorBtn.addEventListener('click', () => {
+        if (selectedHabits.size === 0) return;
+
+        habitIdToColor = 'bulk';
+        const colorSwatchesContainer =
+          document.getElementById('color-swatches');
+        colorSwatchesContainer.innerHTML = '';
+        Object.entries(COLOR_SETS).forEach(([name, colors]) => {
+          const swatch = document.createElement('button');
+          swatch.className =
+            'w-10 h-10 rounded-full border-2 border-zinc-600 hover:opacity-80 transition-opacity';
+          swatch.style.backgroundColor = colors.completed;
+          swatch.dataset.color = name;
+          colorSwatchesContainer.appendChild(swatch);
+        });
+        colorModal.classList.remove('hidden');
+      });
+
+      // Bulk delete
+      bulkDeleteBtn.addEventListener('click', () => {
+        if (selectedHabits.size === 0) return;
+
+        habitIdToDelete = 'bulk';
+        modalTitle.textContent = 'Delete Selected Activities?';
+        modalText.textContent = `Are you sure you want to delete ${
+          selectedHabits.size
+        } selected activit${
+          selectedHabits.size > 1 ? 'ies' : 'y'
+        }? This action cannot be undone.`;
+        modal.classList.remove('hidden');
+      });
+
       addActivityBtn.addEventListener('click', () => {
+        // Get random color from COLOR_SETS, but avoid the last card's color
+        const colorKeys = Object.keys(COLOR_SETS);
+        const lastCardColor =
+          habits.length > 0 ? habits[habits.length - 1].color : null;
+
+        let availableColors = colorKeys.filter(
+          color => color !== lastCardColor
+        );
+
+        // If all colors are filtered out (shouldn't happen with 10 colors), use all colors
+        if (availableColors.length === 0) {
+          availableColors = colorKeys;
+        }
+
+        const randomColor =
+          availableColors[Math.floor(Math.random() * availableColors.length)];
+
         habits.push({
           id: `habit-${Date.now()}`,
           name: 'New Activity',
           completedDates: new Set(),
-          color: 'gray',
+          color: randomColor,
         });
         renderHabits();
-      });
-
-      deleteAllBtn.addEventListener('click', () => {
-        habitIdToDelete = null;
-        modalTitle.textContent = 'Are you sure?';
-        modalText.textContent =
-          'This will permanently delete all activities. This action cannot be undone.';
-        modal.classList.remove('hidden');
       });
 
       document
@@ -443,9 +770,20 @@
       document
         .getElementById('confirm-delete-btn')
         .addEventListener('click', () => {
-          if (habitIdToDelete)
+          if (habitIdToDelete === 'bulk') {
+            // Delete all selected habits
+            habits = habits.filter(h => !selectedHabits.has(h.id));
+            selectedHabits.clear();
+            selectMode = false;
+            bulkActionsBar.classList.add('hidden');
+          } else if (habitIdToDelete) {
+            // Delete single habit
             habits = habits.filter(h => h.id !== habitIdToDelete);
-          else habits = [];
+          } else {
+            // Delete all habits
+            habits = [];
+          }
+
           renderHabits();
           modal.classList.add('hidden');
           habitIdToDelete = null;
@@ -460,6 +798,14 @@
             `[data-habit-id="${habitId}"] .habit-name`
           );
           nameSpan.click();
+        } else if (e.target.id === 'select-mode-menu-btn') {
+          // Toggle select mode
+          if (!selectMode) {
+            toggleSelectMode();
+          }
+          // Auto-select the card that was clicked
+          selectedHabits.add(habitId);
+          renderHabits();
         } else if (e.target.id === 'delete-btn') {
           habitIdToDelete = habitId;
           const habit = habits.find(h => h.id === habitIdToDelete);
@@ -485,8 +831,21 @@
 
       document.getElementById('color-swatches').addEventListener('click', e => {
         if (e.target.dataset.color) {
-          const habit = habits.find(h => h.id === habitIdToColor);
-          if (habit) habit.color = e.target.dataset.color;
+          const selectedColor = e.target.dataset.color;
+
+          if (habitIdToColor === 'bulk') {
+            // Apply color to all selected habits
+            habits.forEach(h => {
+              if (selectedHabits.has(h.id)) {
+                h.color = selectedColor;
+              }
+            });
+          } else {
+            // Apply color to single habit
+            const habit = habits.find(h => h.id === habitIdToColor);
+            if (habit) habit.color = selectedColor;
+          }
+
           renderHabits();
           colorModal.classList.add('hidden');
           habitIdToColor = null;
