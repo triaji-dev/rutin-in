@@ -3,6 +3,11 @@ import { loadHabits } from './storage.js';
 import { updateViewModeUI } from './render.js';
 import { toggleSelectMode } from './selectMode.js';
 import {
+  handleDownload,
+  handleUploadClick,
+  handleFileUpload,
+} from './download.js';
+import {
   handleCardClick,
   handleCardKeydown,
   handleCardFocusout,
@@ -39,6 +44,24 @@ const initEventListeners = () => {
 
   // View toggle
   elements.viewToggle.addEventListener('change', handleViewToggle);
+
+  // Download button
+  const downloadBtn = document.getElementById('download-btn');
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', handleDownload);
+  }
+
+  // Upload button and file input
+  const uploadBtn = document.getElementById('upload-btn');
+  const uploadInput = document.getElementById('upload-input');
+
+  if (uploadBtn) {
+    uploadBtn.addEventListener('click', handleUploadClick);
+  }
+
+  if (uploadInput) {
+    uploadInput.addEventListener('change', handleFileUpload);
+  }
 
   // Select mode buttons
   elements.selectAllBtn.addEventListener('click', handleSelectAll);
