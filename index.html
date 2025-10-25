@@ -13,12 +13,137 @@
     <link rel="shortcut icon" href="favicon.svg" type="image/svg" />
   </head>
   <body class="bg-zinc-900">
+    <!-- SVG Sprite -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none">
+      <!-- Download Icon -->
+      <symbol
+        id="icon-download"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </symbol>
+
+      <!-- Upload Icon -->
+      <symbol
+        id="icon-upload"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+      </symbol>
+
+      <!-- Paintbrush Icon -->
+      <symbol
+        id="icon-paintbrush"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M10 2v2" />
+        <path d="M14 2v4" />
+        <path d="M17 2a1 1 0 0 1 1 1v9H6V3a1 1 0 0 1 1-1z" />
+        <path
+          d="M6 12a1 1 0 0 0-1 1v1a2 2 0 0 0 2 2h2a1 1 0 0 1 1 1v2.9a2 2 0 1 0 4 0V17a1 1 0 0 1 1-1h2a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1"
+        />
+      </symbol>
+
+      <!-- Trash Icon -->
+      <symbol
+        id="icon-trash"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path d="M3 6h18"></path>
+        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+      </symbol>
+
+      <!-- Check Square Icon -->
+      <symbol
+        id="icon-check-square"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <path d="M9 11l3 3L22 4"></path>
+      </symbol>
+
+      <!-- Square Icon -->
+      <symbol
+        id="icon-square"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+      </symbol>
+
+      <!-- X Icon -->
+      <symbol
+        id="icon-x"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </symbol>
+    </svg>
+
     <div class="container mx-auto max-w-sm p-4 pt-6">
       <!-- Header -->
       <header class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-white">
-          rutin.in <span class="version">v.1.1</span>
-        </h1>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl font-bold text-white">
+            rutin.in <span class="version">v.1.1</span>
+          </h1>
+          <button
+            id="download-btn"
+            class="btn-icon text-zinc-400 hover:text-white transition-colors"
+            data-tooltip="Download Data"
+          >
+            <svg width="18" height="18" fill="none" stroke="currentColor">
+              <use href="#icon-download"></use>
+            </svg>
+          </button>
+          <button
+            id="upload-btn"
+            class="btn-icon text-zinc-400 hover:text-white transition-colors"
+            data-tooltip="Upload Data"
+          >
+            <svg width="18" height="18" fill="none" stroke="currentColor">
+              <use href="#icon-upload"></use>
+            </svg>
+          </button>
+          <input
+            type="file"
+            id="upload-input"
+            accept=".json"
+            style="display: none"
+          />
+        </div>
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-2 text-sm">
             <span id="weekly-label" class="text-white">Weekly</span>
@@ -39,7 +164,7 @@
           data-tooltip="Change Color"
         >
           <svg width="24" height="24">
-            <use href="./assets/icons/sprite.svg#icon-paintbrush"></use>
+            <use href="#icon-paintbrush"></use>
           </svg>
         </button>
         <button
@@ -48,7 +173,7 @@
           data-tooltip="Delete Selected"
         >
           <svg width="20" height="20">
-            <use href="./assets/icons/sprite.svg#icon-trash"></use>
+            <use href="#icon-trash"></use>
           </svg>
         </button>
         <button
@@ -57,7 +182,7 @@
           data-tooltip="Select All"
         >
           <svg width="20" height="20">
-            <use href="./assets/icons/sprite.svg#icon-check-square"></use>
+            <use href="#icon-check-square"></use>
           </svg>
         </button>
         <button
@@ -66,7 +191,7 @@
           data-tooltip="Unselect All"
         >
           <svg width="20" height="20">
-            <use href="./assets/icons/sprite.svg#icon-square"></use>
+            <use href="#icon-square"></use>
           </svg>
         </button>
         <button
@@ -75,7 +200,7 @@
           data-tooltip="Exit Select Mode"
         >
           <svg width="20" height="20">
-            <use href="./assets/icons/sprite.svg#icon-x"></use>
+            <use href="#icon-x"></use>
           </svg>
         </button>
       </div>
